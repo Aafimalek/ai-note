@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="public/goatius.png" alt="Goat Notes Logo" width="120" />
   <h1>AI Notes</h1>
   <p><strong>The AI-Powered Note-Taking App</strong></p>
 </div>
@@ -44,7 +43,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Aafimalek/ai-notes.git
+    git clone https://github.com/Aafimalek/ai-note.git
     cd goat-notes
     ```
 
