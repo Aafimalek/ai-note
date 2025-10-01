@@ -4,7 +4,7 @@
 </div>
 
 ---
-
+TRY LIVE:- https://www.ai-notez.fun/ OR  https://ai-notes-snowy-delta.vercel.app/ 
 AI Notes is a modern, feature-rich note-taking application built with Next.js and powered by the Google Gemini API. It provides a seamless and intuitive experience for creating, managing, and enhancing your notes with the power of artificial intelligence. Your notes are stored securely in your browser's local storage.
 
 ## ✨ Features
