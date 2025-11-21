@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
-import Header from "@/components/Header";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/AppSidebar";
-import NoteProvider from "@/providers/NoteProvider";
 
+const outfit = Outfit({ subsets: ["latin"] });
+
+// Trigger rebuild
 export const metadata: Metadata = {
   title: "AI Notes",
 };
@@ -18,28 +18,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={outfit.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NoteProvider>
-            <SidebarProvider>
-              <AppSidebar />
-
-              <div className="flex min-h-screen w-full flex-col">
-                <Header />
-
-                <main className="flex flex-1 flex-col px-4 pt-10 xl:px-8">
-                  {children}
-                </main>
-              </div>
-            </SidebarProvider>
-
-            <Toaster />
-          </NoteProvider>
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
