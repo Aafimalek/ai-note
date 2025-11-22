@@ -3,13 +3,15 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
+import logo from "@/assets/logo.png";
+
 export default function LandingHeader() {
     return (
         <header className="sticky top-0 z-50 w-full glass">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
                 <Link className="flex items-center gap-2" href="/">
                     <Image
-                        src="/logo.png"
+                        src={logo}
                         height={40}
                         width={40}
                         alt="AI Notes Logo"
