@@ -1,6 +1,6 @@
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { Brain, Lock, Sparkles, Languages, Tags, Check, X, FileText, Globe, Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function FeaturesSection() {
@@ -66,7 +66,7 @@ const SkeletonAI = () => {
 };
 
 const SkeletonOrg = () => {
-    const variants = {
+    const variants: Variants = {
         initial: (i: number) => {
             // Deterministic "random" positions based on index
             const positions = [
