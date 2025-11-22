@@ -5,6 +5,8 @@ import { Button } from "./ui/button";
 import DarkModeToggle from "./DarkModeToggle";
 import { SidebarTrigger } from "./ui/sidebar";
 
+import logo from "@/assets/logo.png";
+
 function Header() {
   return (
     <header
@@ -17,7 +19,7 @@ function Header() {
 
       <Link className="flex items-end gap-2" href="/">
         <Image
-          src="/goatius.png"
+          src={logo}
           height={60}
           width={60}
           alt="logo"
