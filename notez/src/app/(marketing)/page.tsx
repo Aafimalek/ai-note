@@ -1,79 +1,125 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles, Brain } from "lucide-react";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
+import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
     return (
         <div className="flex flex-col items-center relative min-h-screen">
-            {/* Global Background from Pricing Section */}
-            <div className="fixed inset-0 -z-50 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-70"></div>
+            {/* Hero Section with Aceternity HeroHighlight */}
+            <HeroHighlight containerClassName="h-[40rem] md:h-[50rem]">
+                <motion.h1
+                    initial={{
+                        opacity: 0,
+                        y: 20,
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: [20, -5, 0],
+                    }}
+                    transition={{
+                        duration: 0.5,
+                        ease: [0.4, 0.0, 0.2, 1],
+                    }}
+                    className="text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto"
+                >
+                    Capture Your Thoughts with{" "}
+                    <Highlight className="text-black dark:text-white">
+                        AI-Powered Precision
+                    </Highlight>
+                </motion.h1>
 
-            {/* Hero Section */}
-            <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative overflow-hidden">
-                {/* Removed local hero background to use global one */}
-                <div className="container px-4 md:px-6 mx-auto relative z-10">
-                    <div className="flex flex-col items-center space-y-4 text-center animate-fade-in-up">
-                        <div className="space-y-2">
-                            <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-secondary-foreground animate-gradient-x pb-2">
-                                Capture Your Thoughts with AI
-                            </h1>
-                            <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                                The smartest way to take notes. Enhanced with AI to help you organize, summarize, and expand your ideas.
-                            </p>
-                        </div>
-                        <div className="space-x-4 pt-4">
-                            <Link href="/notes">
-                                <Button size="lg" className="h-12 px-8 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1 active:scale-95">
-                                    Get Started <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            </Link>
-                            <Link href="#features">
-                                <Button variant="outline" size="lg" className="h-12 px-8 hover:bg-secondary/50 backdrop-blur-sm transition-all duration-300 active:scale-95">
-                                    Learn More
-                                </Button>
-                            </Link>
-                        </div>
-
-                        {/* Floating Element Visualization */}
-                        <div className="mt-12 w-full max-w-5xl mx-auto animate-float">
-                            <div className="rounded-xl border bg-background/50 backdrop-blur-xl shadow-2xl p-4 md:p-8 relative overflow-hidden transition-all duration-500 hover:shadow-primary/10 hover:shadow-3xl group/card">
-                                <div className="flex items-center gap-2 mb-6 border-b pb-4">
-                                    <div className="h-3 w-3 rounded-full bg-red-500 transition-all duration-300 group-hover/card:scale-110"></div>
-                                    <div className="h-3 w-3 rounded-full bg-yellow-500 transition-all duration-300 group-hover/card:scale-110 delay-75"></div>
-                                    <div className="h-3 w-3 rounded-full bg-green-500 transition-all duration-300 group-hover/card:scale-110 delay-150"></div>
-                                    <div className="ml-4 text-sm text-muted-foreground font-mono flex items-center gap-2">
-                                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                                        AI Analysis Active
-                                    </div>
-                                </div>
-                                <div className="space-y-2 font-mono text-sm md:text-base leading-relaxed text-muted-foreground">
-                                    <p>
-                                        Artificial Intelligence is <span className="text-foreground bg-primary/10 border-b-2 border-primary px-1 rounded-sm animate-[pulse_3s_ease-in-out_infinite] hover:scale-105 hover:bg-primary/20 transition-all duration-300 cursor-default">revolutionizing</span> the way we take notes.
-                                        By automatically <span className="text-foreground bg-purple-500/10 border-b-2 border-purple-500 px-1 rounded-sm animate-[pulse_3s_ease-in-out_infinite] delay-75 hover:scale-105 hover:bg-purple-500/20 transition-all duration-300 cursor-default">summarizing content</span>,
-                                        identifying <span className="text-foreground bg-blue-500/10 border-b-2 border-blue-500 px-1 rounded-sm animate-[pulse_3s_ease-in-out_infinite] delay-150 hover:scale-105 hover:bg-blue-500/20 transition-all duration-300 cursor-default">key concepts</span>,
-                                        and <span className="text-foreground bg-green-500/10 border-b-2 border-green-500 px-1 rounded-sm animate-[pulse_3s_ease-in-out_infinite] delay-200 hover:scale-105 hover:bg-green-500/20 transition-all duration-300 cursor-default">organizing information</span>,
-                                        AI empowers users to focus on <span className="text-foreground bg-orange-500/10 border-b-2 border-orange-500 px-1 rounded-sm animate-[pulse_3s_ease-in-out_infinite] delay-300 hover:scale-105 hover:bg-orange-500/20 transition-all duration-300 cursor-default">creativity</span>
-                                        and critical thinking rather than manual data entry.
-                                    </p>
-                                </div>
-
-                                {/* Floating AI badges/tags that appear to be extracted */}
-                                <div className="absolute -right-4 top-20 bg-background border shadow-lg p-2 rounded-lg text-xs font-medium text-purple-500 rotate-12 animate-float delay-100 hidden md:block hover:scale-110 transition-transform cursor-pointer">
-                                    #summary
-                                </div>
-                                <div className="absolute -left-2 bottom-10 bg-background border shadow-lg p-2 rounded-lg text-xs font-medium text-blue-500 -rotate-6 animate-float delay-300 hidden md:block hover:scale-110 transition-transform cursor-pointer">
-                                    #concepts
-                                </div>
-                                <div className="absolute right-10 bottom-4 bg-background border shadow-lg p-2 rounded-lg text-xs font-medium text-green-500 rotate-3 animate-float delay-500 hidden md:block hover:scale-110 transition-transform cursor-pointer">
-                                    #organization
-                                </div>
+                {/* AI Analysis Window Card */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+                    className="mt-12 relative z-20 w-full max-w-2xl mx-auto"
+                >
+                    <div className="relative bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden">
+                        {/* Window Header */}
+                        <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+                            <div className="flex gap-1.5">
+                                <div className="w-3 h-3 rounded-full bg-red-500" />
+                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                            </div>
+                            <div className="ml-4 flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 font-mono">AI Analysis Active</span>
                             </div>
                         </div>
+
+                        {/* Window Content */}
+                        <div className="p-6 md:p-8 relative min-h-[200px] flex items-center">
+                            <p className="text-lg md:text-xl leading-relaxed text-neutral-700 dark:text-neutral-300 font-medium">
+                                Artificial Intelligence is{" "}
+                                <span className="relative inline-block px-1 mx-1">
+                                    <span className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 rounded transform -rotate-1" />
+                                    <span className="relative z-10">revolutionizing</span>
+                                </span>{" "}
+                                the way we take notes. By automatically{" "}
+                                <span className="relative inline-block px-1 mx-1">
+                                    <span className="absolute inset-0 bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded transform rotate-1" />
+                                    <span className="relative z-10 text-purple-700 dark:text-purple-300">summarizing content</span>
+                                </span>
+                                , identifying{" "}
+                                <span className="relative inline-block px-1 mx-1">
+                                    <span className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded transform -rotate-1" />
+                                    <span className="relative z-10 text-blue-700 dark:text-blue-300">key concepts</span>
+                                </span>
+                                , and{" "}
+                                <span className="relative inline-block px-1 mx-1">
+                                    <span className="absolute inset-0 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded transform rotate-1" />
+                                    <span className="relative z-10 text-green-700 dark:text-green-300">organizing information</span>
+                                </span>
+                                , AI empowers users to focus on creativity.
+                            </p>
+
+                            {/* Floating Tags */}
+                            <motion.div
+                                animate={{ y: [0, -10, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute -left-4 top-1/2 bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 px-3 py-1 rounded-full text-xs font-semibold text-blue-500 transform -rotate-12 hidden md:block"
+                            >
+                                #concepts
+                            </motion.div>
+                            <motion.div
+                                animate={{ y: [0, 10, 0] }}
+                                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                                className="absolute -right-2 top-1/3 bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 px-3 py-1 rounded-full text-xs font-semibold text-purple-500 transform rotate-6 hidden md:block"
+                            >
+                                #summary
+                            </motion.div>
+                            <motion.div
+                                animate={{ y: [0, -8, 0] }}
+                                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                                className="absolute right-10 bottom-4 bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 px-3 py-1 rounded-full text-xs font-semibold text-green-500 transform -rotate-3 hidden md:block"
+                            >
+                                #organization
+                            </motion.div>
+                        </div>
                     </div>
+                </motion.div>
+
+                <div className="flex gap-4 justify-center mt-12 relative z-20">
+                    <Link href="/notes">
+                        <Button size="lg" className="rounded-none h-12 px-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
+                            Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </Link>
+                    <Link href="#features">
+                        <Button variant="outline" size="lg" className="rounded-none h-12 px-8 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all duration-300 active:scale-95">
+                            Learn More
+                        </Button>
+                    </Link>
                 </div>
-            </section>
+            </HeroHighlight>
 
             <FeaturesSection />
 
@@ -84,41 +130,45 @@ export default function LandingPage() {
                 <div className="container px-4 md:px-6 mx-auto">
                     <div className="grid gap-10 px-10 md:gap-16 lg:grid-cols-2">
                         <div className="space-y-4">
-                            <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
+                            <div className="inline-block rounded-none bg-neutral-100 dark:bg-neutral-800 px-3 py-1 text-sm font-medium text-neutral-800 dark:text-neutral-200">
                                 About
                             </div>
-                            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
+                            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-neutral-800 dark:text-neutral-100">
                                 Experience the future of note-taking
                             </h2>
-                            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            <p className="max-w-[600px] text-neutral-600 dark:text-neutral-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                                 We believe that note-taking should be effortless. That's why we built AI Notes - to handle the organization while you focus on the ideas.
                             </p>
                             <ul className="grid gap-2 py-4">
                                 <li className="flex items-center gap-2 group/item">
-                                    <CheckCircle2 className="h-4 w-4 text-primary transition-all duration-300 group-hover/item:scale-125 group-hover/item:text-primary" />
-                                    <span className="text-muted-foreground transition-colors duration-300 group-hover/item:text-foreground">Real-time synchronization</span>
+                                    <CheckCircle2 className="h-4 w-4 text-neutral-800 dark:text-neutral-100 transition-all duration-300 group-hover/item:scale-125" />
+                                    <span className="text-neutral-600 dark:text-neutral-400 transition-colors duration-300 group-hover/item:text-neutral-900 dark:group-hover/item:text-neutral-100">Real-time synchronization</span>
                                 </li>
                                 <li className="flex items-center gap-2 group/item">
-                                    <CheckCircle2 className="h-4 w-4 text-primary transition-all duration-300 group-hover/item:scale-125 group-hover/item:text-primary" />
-                                    <span className="text-muted-foreground transition-colors duration-300 group-hover/item:text-foreground">Markdown support</span>
+                                    <CheckCircle2 className="h-4 w-4 text-neutral-800 dark:text-neutral-100 transition-all duration-300 group-hover/item:scale-125" />
+                                    <span className="text-neutral-600 dark:text-neutral-400 transition-colors duration-300 group-hover/item:text-neutral-900 dark:group-hover/item:text-neutral-100">Markdown support</span>
                                 </li>
                                 <li className="flex items-center gap-2 group/item">
-                                    <CheckCircle2 className="h-4 w-4 text-primary transition-all duration-300 group-hover/item:scale-125 group-hover/item:text-primary" />
-                                    <span className="text-muted-foreground transition-colors duration-300 group-hover/item:text-foreground">Export to PDF & HTML</span>
+                                    <CheckCircle2 className="h-4 w-4 text-neutral-800 dark:text-neutral-100 transition-all duration-300 group-hover/item:scale-125" />
+                                    <span className="text-neutral-600 dark:text-neutral-400 transition-colors duration-300 group-hover/item:text-neutral-900 dark:group-hover/item:text-neutral-100">Export to PDF & HTML</span>
                                 </li>
                             </ul>
                             <div className="flex flex-col gap-2 min-[400px]:flex-row">
                                 <Link href="/notes">
-                                    <Button size="lg" className="transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95">Try it Free</Button>
+                                    <Button size="lg" className="rounded-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black">Try it Free</Button>
                                 </Link>
                             </div>
                         </div>
                         <div className="flex items-center justify-center">
-                            <div className="relative aspect-video overflow-hidden rounded-xl border bg-muted/50 shadow-xl lg:aspect-square">
-                                {/* Placeholder for an image or demo */}
-                                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                                    <span className="text-lg">App Screenshot / Demo</span>
-                                </div>
+                            <div className="relative w-full rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 shadow-xl group">
+                                <video
+                                    src="/ai_notes.mp4"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="w-full h-auto object-contain"
+                                />
                             </div>
                         </div>
                     </div>

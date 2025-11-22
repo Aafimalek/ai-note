@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/moving-border";
+import { Button as ShadcnButton } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export default function PricingSection() {
@@ -11,13 +11,13 @@ export default function PricingSection() {
             <div className="container px-4 md:px-6 mx-auto">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                     <div className="space-y-2">
-                        <div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm text-primary">
+                        <div className="inline-block rounded-none bg-neutral-100 dark:bg-neutral-800 px-3 py-1 text-sm font-medium text-neutral-800 dark:text-neutral-200">
                             Pricing
                         </div>
-                        <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
+                        <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-neutral-800 dark:text-neutral-100">
                             Simple, Transparent Pricing
                         </h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                        <p className="max-w-[900px] text-neutral-600 dark:text-neutral-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                             Choose the plan that fits your needs.
                         </p>
                     </div>
@@ -25,120 +25,123 @@ export default function PricingSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {/* Free Tier */}
-                    <div className="flex flex-col rounded-xl glass-card p-6 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] hover:border-primary/30 group">
+                    <div className="flex flex-col rounded-none border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-6 transition-all duration-500 hover:shadow-xl group">
                         <div className="mb-4">
-                            <h3 className="text-xl font-bold">Free</h3>
-                            <p className="text-muted-foreground text-sm">Essential note-taking.</p>
+                            <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100">Free</h3>
+                            <p className="text-neutral-500 dark:text-neutral-400 text-sm">Essential note-taking.</p>
                         </div>
                         <div className="mb-6">
-                            <span className="text-4xl font-bold">₹0</span>
-                            <span className="text-muted-foreground">/month</span>
+                            <span className="text-4xl font-bold text-neutral-800 dark:text-neutral-100">₹0</span>
+                            <span className="text-neutral-500 dark:text-neutral-400">/month</span>
                         </div>
                         <ul className="space-y-3 mb-8 flex-1">
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Unlimited Notes</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Secure Storage</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Markdown Support</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <li className="flex items-center gap-2 text-sm text-neutral-400 dark:text-neutral-600">
                                 <X className="h-4 w-4" />
                                 <span>AI Features</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <li className="flex items-center gap-2 text-sm text-neutral-400 dark:text-neutral-600">
                                 <X className="h-4 w-4" />
                                 <span>Ad-free Experience</span>
                             </li>
                         </ul>
                         <Link href="/notes" className="w-full">
-                            <Button variant="outline" className="w-full active:scale-95 transition-transform">
+                            <ShadcnButton variant="outline" className="w-full rounded-none border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
                                 Get Started
-                            </Button>
+                            </ShadcnButton>
                         </Link>
                     </div>
 
-                    {/* AI Basic (Ad-supported) */}
-                    <div className="flex flex-col rounded-xl glass-card p-6 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] border-2 border-primary/20 hover:border-primary/50 relative overflow-hidden group">
+                    {/* AI Basic */}
+                    <div className="flex flex-col rounded-none border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-6 transition-all duration-500 hover:shadow-xl group relative overflow-hidden">
                         <div className="mb-4">
-                            <h3 className="text-xl font-bold">AI Basic</h3>
-                            <p className="text-muted-foreground text-sm">AI power with ads.</p>
+                            <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100">AI Basic</h3>
+                            <p className="text-neutral-500 dark:text-neutral-400 text-sm">AI power with ads.</p>
                         </div>
                         <div className="mb-6">
-                            <span className="text-4xl font-bold">₹100</span>
-                            <span className="text-muted-foreground">/month</span>
+                            <span className="text-4xl font-bold text-neutral-800 dark:text-neutral-100">₹100</span>
+                            <span className="text-neutral-500 dark:text-neutral-400">/month</span>
                         </div>
                         <ul className="space-y-3 mb-8 flex-1">
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Everything in Free</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>AI Analysis & Summary</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Grammar Check</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Suggested Tags</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <li className="flex items-center gap-2 text-sm text-neutral-400 dark:text-neutral-600">
                                 <X className="h-4 w-4" />
                                 <span>Ad-free Experience</span>
                             </li>
                         </ul>
                         <Link href="/notes" className="w-full">
-                            <Button className="w-full active:scale-95 transition-transform">
+                            <ShadcnButton className="w-full rounded-none bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
                                 Subscribe
-                            </Button>
+                            </ShadcnButton>
                         </Link>
                     </div>
 
                     {/* AI Pro */}
-                    <div className="flex flex-col rounded-xl glass-card p-6 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] hover:border-primary/30 group">
-                        <div className="absolute top-0 right-0 bg-gradient-to-bl from-primary to-purple-600 text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
+                    <div className="flex flex-col rounded-none border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-6 transition-all duration-500 hover:shadow-2xl group relative">
+                        <div className="absolute top-0 right-0 bg-neutral-900 dark:bg-white text-white dark:text-black text-xs font-bold px-3 py-1">
                             POPULAR
                         </div>
                         <div className="mb-4">
-                            <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">AI Pro</h3>
-                            <p className="text-muted-foreground text-sm">The ultimate experience.</p>
+                            <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100">AI Pro</h3>
+                            <p className="text-neutral-500 dark:text-neutral-400 text-sm">The ultimate experience.</p>
                         </div>
                         <div className="mb-6">
-                            <span className="text-4xl font-bold">₹200</span>
-                            <span className="text-muted-foreground">/month</span>
+                            <span className="text-4xl font-bold text-neutral-800 dark:text-neutral-100">₹200</span>
+                            <span className="text-neutral-500 dark:text-neutral-400">/month</span>
                         </div>
                         <ul className="space-y-3 mb-8 flex-1">
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Everything in AI Basic</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>No Ads</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Priority Support</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Early Access Features</span>
                             </li>
-                            <li className="flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4 text-primary transition-all duration-300 group-hover:scale-110" />
+                            <li className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                                <Check className="h-4 w-4 text-neutral-800 dark:text-neutral-100" />
                                 <span>Unlimited AI Usage</span>
                             </li>
                         </ul>
-                        <Link href="/notes" className="w-full">
-                            <Button className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg active:scale-95 transition-transform">
+                        <Link href="/notes" className="w-full flex justify-center">
+                            <Button
+                                borderRadius="0rem"
+                                className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-neutral-800"
+                            >
                                 Go Pro
                             </Button>
                         </Link>

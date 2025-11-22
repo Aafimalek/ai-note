@@ -19,51 +19,129 @@ export default function FlickerBackground() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+        let width = 0;
+        let height = 0;
+        let isDark = false;
+
         const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            isDark = document.documentElement.classList.contains('dark');
         };
+
+        // Observer to detect theme changes
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    isDark = document.documentElement.classList.contains('dark');
+                }
+            });
+        });
+
+        observer.observe(document.documentElement, { attributes: true });
 
         resize();
         window.addEventListener('resize', resize);
 
-        // Create dots grid
+        // Dot configuration
         const spacing = 40;
-        const dots: Array<{ x: number; y: number; opacity: number; targetOpacity: number; flickerSpeed: number }> = [];
-
-        for (let x = 0; x < canvas.width; x += spacing) {
-            for (let y = 0; y < canvas.height; y += spacing) {
-                dots.push({
-                    x,
-                    y,
-                    opacity: 0.1,
-                    targetOpacity: 0.1,
-                    flickerSpeed: 0.02 + Math.random() * 0.05
-                });
-            }
+        interface Dot {
+            x: number;
+            y: number;
+            opacity: number;
+            targetOpacity: number;
+            state: 'idle' | 'glowing' | 'fading';
+            speed: number;
+            maxGlow: number;
         }
 
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const dots: Dot[] = [];
 
-            // Get theme
-            const isDark = document.documentElement.classList.contains('dark');
-            const color = isDark ? 'rgba(255, 255, 255,' : 'rgba(0, 0, 0,';
+        const initDots = () => {
+            dots.length = 0;
+            for (let x = 0; x < width; x += spacing) {
+                for (let y = 0; y < height; y += spacing) {
+                    // Add some jitter to position for organic feel
+                    const offsetX = (Math.random() - 0.5) * 10;
+                    const offsetY = (Math.random() - 0.5) * 10;
+
+                    dots.push({
+                        x: x + offsetX,
+                        y: y + offsetY,
+                        opacity: 0.1,
+                        targetOpacity: 0.1,
+                        state: 'idle',
+                        speed: 0.02 + Math.random() * 0.03,
+                        maxGlow: 0.5 + Math.random() * 0.5 // Random peak brightness
+                    });
+                }
+            }
+        };
+
+        initDots();
+        // Re-init dots on resize to fill screen
+        window.addEventListener('resize', initDots);
+
+        const animate = () => {
+            ctx.clearRect(0, 0, width, height);
+
+            // Base colors
+            const baseColor = isDark ? '255, 255, 255' : '0, 0, 0';
+            // Glow color (Purple/Blue for that AI feel)
+            const glowColor = isDark ? '120, 180, 255' : '100, 50, 255';
 
             dots.forEach(dot => {
-                // Randomly change target opacity
-                if (Math.random() < 0.01) {
-                    dot.targetOpacity = Math.random() < 0.3 ? 0.02 : 0.1;
+                // State machine for glowing
+                if (dot.state === 'idle') {
+                    // Small chance to start glowing
+                    if (Math.random() < 0.001) {
+                        dot.state = 'glowing';
+                        dot.targetOpacity = dot.maxGlow;
+                    } else {
+                        // Slight flicker in idle state
+                        dot.targetOpacity = 0.05 + Math.random() * 0.05;
+                    }
+                } else if (dot.state === 'glowing') {
+                    if (dot.opacity >= dot.targetOpacity - 0.05) {
+                        dot.state = 'fading';
+                        dot.targetOpacity = 0.1;
+                    }
+                } else if (dot.state === 'fading') {
+                    if (dot.opacity <= dot.targetOpacity + 0.05) {
+                        dot.state = 'idle';
+                    }
                 }
 
-                // Smoothly transition to target opacity
-                dot.opacity += (dot.targetOpacity - dot.opacity) * dot.flickerSpeed;
+                // Smooth transition
+                dot.opacity += (dot.targetOpacity - dot.opacity) * dot.speed;
 
-                // Draw dot
-                ctx.fillStyle = color + dot.opacity + ')';
+                // Draw
                 ctx.beginPath();
-                ctx.arc(dot.x, dot.y, 1, 0, Math.PI * 2);
-                ctx.fill();
+
+                if (dot.state !== 'idle' && dot.opacity > 0.3) {
+                    // Draw glow when active
+                    const glowSize = 2 + (dot.opacity * 4); // Glow expands with opacity
+                    const gradient = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, glowSize);
+                    gradient.addColorStop(0, `rgba(${glowColor}, ${dot.opacity})`);
+                    gradient.addColorStop(1, `rgba(${glowColor}, 0)`);
+
+                    ctx.fillStyle = gradient;
+                    ctx.arc(dot.x, dot.y, glowSize, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw bright center
+                    ctx.beginPath();
+                    ctx.fillStyle = `rgba(${baseColor}, ${dot.opacity})`;
+                    ctx.arc(dot.x, dot.y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Draw normal idle dot
+                    ctx.fillStyle = `rgba(${baseColor}, ${dot.opacity})`;
+                    ctx.arc(dot.x, dot.y, 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             });
 
             requestAnimationFrame(animate);
@@ -73,6 +151,8 @@ export default function FlickerBackground() {
 
         return () => {
             window.removeEventListener('resize', resize);
+            window.removeEventListener('resize', initDots);
+            observer.disconnect();
             const existingCanvas = document.getElementById('flicker-bg');
             if (existingCanvas) {
                 existingCanvas.remove();

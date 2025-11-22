@@ -1,205 +1,297 @@
-"use client";
-
-import {
-    FileText,
-    ScanText,
-    Tags,
-    Lock,
-    Languages,
-    ArrowRight,
-    Mic,
-    Brain,
-    ShieldCheck,
-    Zap,
-} from "lucide-react";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Brain, Lock, Sparkles, Languages, Tags, Check, X, FileText, Globe, Search } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-
-const features = [
-    {
-        title: "Deep AI Analysis",
-        description: "Uncover hidden patterns and insights in your notes.",
-        icon: <Brain className="h-6 w-6" />,
-        className: "col-span-1 md:col-span-2 lg:col-span-2",
-        skeleton: (
-            <div className="flex-1 bg-muted/30 rounded-xl p-6 relative overflow-hidden h-full min-h-[200px] flex flex-col justify-between group/skeleton">
-                <div className="space-y-3 z-10">
-                    <div className="h-5 bg-muted-foreground/10 rounded w-3/4 animate-pulse"></div>
-                    <div className="h-5 bg-muted-foreground/10 rounded w-full animate-pulse delay-75"></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mt-6 z-10">
-                    <div className="bg-background/80 backdrop-blur-sm p-3 rounded-lg border shadow-sm transition-transform duration-500 group-hover/skeleton:translate-y-[-5px]">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></div>
-                            <span className="text-xs font-medium">Sentiment</span>
-                        </div>
-                        <div className="h-1.5 bg-blue-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-500 w-[85%] animate-[width_2s_ease-in-out_infinite]"></div>
-                        </div>
-                    </div>
-                    <div className="bg-background/80 backdrop-blur-sm p-3 rounded-lg border shadow-sm transition-transform duration-500 group-hover/skeleton:translate-y-[-5px] delay-100">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="h-2 w-2 rounded-full bg-purple-500 animate-pulse"></div>
-                            <span className="text-xs font-medium">Keywords</span>
-                        </div>
-                        <div className="flex gap-1">
-                            <span className="h-1.5 w-1.5 rounded-full bg-purple-500 animate-bounce delay-0"></span>
-                            <span className="h-1.5 w-1.5 rounded-full bg-purple-500 animate-bounce delay-100"></span>
-                            <span className="h-1.5 w-1.5 rounded-full bg-purple-500 animate-bounce delay-200"></span>
-                        </div>
-                    </div>
-                </div>
-                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl group-hover/skeleton:bg-primary/20 transition-colors duration-500"></div>
-                <div className="absolute top-10 right-10 w-20 h-20 bg-purple-500/10 rounded-full blur-2xl group-hover/skeleton:bg-purple-500/20 transition-colors duration-500"></div>
-            </div>
-        ),
-    },
-    {
-        title: "Instant Summary",
-        description: "Turn long notes into concise bullet points.",
-        icon: <FileText className="h-6 w-6" />,
-        className: "col-span-1",
-        skeleton: (
-            <div className="flex-1 bg-muted/30 rounded-xl p-4 space-y-3 relative h-full min-h-[180px] flex flex-col group/skeleton">
-                <div className="space-y-1.5 opacity-40 transition-opacity duration-300 group-hover/skeleton:opacity-20">
-                    <div className="h-2 bg-foreground/20 rounded w-full"></div>
-                    <div className="h-2 bg-foreground/20 rounded w-full"></div>
-                    <div className="h-2 bg-foreground/20 rounded w-3/4"></div>
-                </div>
-                <div className="flex justify-center py-1">
-                    <div className="bg-primary/10 p-1.5 rounded-full group-hover/skeleton:scale-110 transition-transform duration-300">
-                        <Zap className="h-4 w-4 text-primary" />
-                    </div>
-                </div>
-                <div className="space-y-2 bg-background/60 p-3 rounded-lg border shadow-sm flex-1 transition-all duration-300 group-hover/skeleton:bg-background/80 group-hover/skeleton:shadow-md">
-                    <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-                        <div className="h-2 bg-primary/20 rounded w-3/4"></div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-                        <div className="h-2 bg-primary/20 rounded w-5/6"></div>
-                    </div>
-                </div>
-            </div>
-        ),
-    },
-    {
-        title: "Perfect Grammar",
-        description: "AI-powered proofreading and style suggestions.",
-        icon: <ScanText className="h-6 w-6" />,
-        className: "col-span-1",
-        skeleton: (
-            <div className="flex-1 bg-muted/30 rounded-xl p-4 flex items-center justify-center h-full min-h-[180px] group/skeleton">
-                <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border shadow-sm w-full transition-all duration-300 group-hover/skeleton:shadow-md">
-                    <div className="flex items-center gap-2 mb-2 text-xs text-muted-foreground">
-                        <span className="line-through decoration-red-400 decoration-2 group-hover/skeleton:opacity-50 transition-opacity">Thier</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover/skeleton:translate-x-1" />
-                        <span className="text-green-600 font-bold bg-green-50 px-1 rounded animate-pulse">Their</span>
-                    </div>
-                    <div className="h-1 w-full bg-gradient-to-r from-red-400 to-green-400 rounded-full opacity-50"></div>
-                </div>
-            </div>
-        ),
-    },
-    {
-        title: "Smart Tags",
-        description: "Auto-categorization for effortless organization.",
-        icon: <Tags className="h-6 w-6" />,
-        className: "col-span-1",
-        skeleton: (
-            <div className="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col justify-center gap-3 h-full min-h-[160px] group/skeleton">
-                <div className="flex flex-wrap gap-2 justify-center">
-                    <span className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-xs px-2.5 py-1 border border-blue-200 dark:border-blue-800 transition-transform duration-300 group-hover/skeleton:scale-110 hover:!scale-125 cursor-default">#project</span>
-                    <span className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-xs px-2.5 py-1 border border-purple-200 dark:border-purple-800 transition-transform duration-300 group-hover/skeleton:scale-110 hover:!scale-125 cursor-default delay-75">#ideas</span>
-                    <span className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 text-xs px-2.5 py-1 border border-green-200 dark:border-green-800 transition-transform duration-300 group-hover/skeleton:scale-110 hover:!scale-125 cursor-default delay-150">#urgent</span>
-                    <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 text-xs px-2.5 py-1 border border-orange-200 dark:border-orange-800 opacity-0 group-hover/skeleton:opacity-100 transition-all duration-300 scale-50 group-hover/skeleton:scale-100">#ai</span>
-                </div>
-            </div>
-        ),
-    },
-    {
-        title: "Secure Vault",
-        description: "Military-grade encryption for your private data.",
-        icon: <ShieldCheck className="h-6 w-6" />,
-        className: "col-span-1",
-        skeleton: (
-            <div className="flex-1 bg-muted/30 rounded-xl p-4 flex items-center justify-center h-full min-h-[160px] relative overflow-hidden group/skeleton">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-500/10 to-transparent animate-pulse"></div>
-                <ShieldCheck className="h-12 w-12 text-green-600 dark:text-green-400 relative z-10 transition-transform duration-500 group-hover/skeleton:scale-110" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 border-2 border-green-500/30 rounded-full animate-[ping_3s_linear_infinite]"></div>
-                </div>
-            </div>
-        ),
-    },
-    {
-        title: "Global Translation",
-        description: "Break language barriers with instant translation.",
-        icon: <Languages className="h-6 w-6" />,
-        className: "col-span-1 md:col-span-2 lg:col-span-2",
-        skeleton: (
-            <div className="flex-1 bg-muted/30 rounded-xl p-5 flex items-center justify-between gap-4 h-full min-h-[160px] group/skeleton">
-                <div className="bg-background p-3 rounded-lg shadow-sm text-xs flex-1 border transition-all duration-300 group-hover/skeleton:-translate-x-2">
-                    <p className="text-muted-foreground mb-1">English</p>
-                    <p className="font-medium">Hello, how are you?</p>
-                </div>
-                <ArrowRight className="h-5 w-5 text-muted-foreground/50 transition-all duration-300 group-hover/skeleton:text-primary group-hover/skeleton:scale-125" />
-                <div className="bg-primary/5 p-3 rounded-lg shadow-sm text-xs flex-1 border border-primary/20 transition-all duration-300 group-hover/skeleton:translate-x-2 group-hover/skeleton:bg-primary/10">
-                    <p className="text-primary mb-1">Spanish</p>
-                    <p className="font-medium text-foreground">Hola, ¿cómo estás?</p>
-                </div>
-            </div>
-        ),
-    },
-];
 
 export default function FeaturesSection() {
     return (
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
-            <div className="container px-4 md:px-6 mx-auto">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
-                    <div className="space-y-2">
-                        <div className="inline-block bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-2">
-                            Features
-                        </div>
-                        <h2 className="text-3xl font-bold tracking-tighter md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                            Intelligent Note Taking
-                        </h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Experience the power of AI integrated directly into your workflow.
-                        </p>
+        <section id="features" className="py-20 w-full">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                    <div className="inline-block rounded-none bg-neutral-100 dark:bg-neutral-800 px-3 py-1 text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                        Features
                     </div>
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-neutral-800 dark:text-neutral-100">
+                        Everything you need to master your notes
+                    </h2>
+                    <p className="max-w-[900px] text-neutral-600 dark:text-neutral-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                        Powerful features to help you capture, organize, and understand your thoughts.
+                    </p>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
-                    {features.map((feature, index) => (
-                        <div
-                            key={index}
-                            className={cn(
-                                "group relative overflow-hidden rounded-2xl glass-card p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 flex flex-col",
-                                feature.className
-                            )}
-                        >
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                                    {feature.icon}
-                                </div>
-                            </div>
-
-                            <div className="space-y-2 mb-6">
-                                <h3 className="font-bold text-xl group-hover:text-primary transition-colors duration-300">{feature.title}</h3>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {feature.description}
-                                </p>
-                            </div>
-
-                            <div className="mt-auto w-full">
-                                {feature.skeleton}
-                            </div>
-                        </div>
+                <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
+                    {items.map((item, i) => (
+                        <BentoGridItem
+                            key={i}
+                            title={item.title}
+                            description={item.description}
+                            header={item.header}
+                            className={item.className}
+                            icon={item.icon}
+                        />
                     ))}
-                </div>
+                </BentoGrid>
             </div>
         </section>
     );
 }
+
+// --- Skeletons ---
+
+const SkeletonAI = () => {
+    return (
+        <div className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col space-y-2 relative overflow-hidden rounded-lg bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/10 to-transparent h-full w-full animate-[scan_3s_ease-in-out_infinite]" />
+            <div className="p-4 space-y-3 relative z-10">
+                <div className="h-4 w-3/4 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse" />
+                <div className="h-4 w-full bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse delay-75" />
+                <div className="h-4 w-5/6 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse delay-150" />
+
+                {/* AI Insight Box */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-md"
+                >
+                    <div className="flex items-center gap-2 mb-2">
+                        <Sparkles className="w-3 h-3 text-indigo-500" />
+                        <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">AI Summary</span>
+                    </div>
+                    <div className="h-2 w-full bg-indigo-200 dark:bg-indigo-800 rounded mb-1" />
+                    <div className="h-2 w-2/3 bg-indigo-200 dark:bg-indigo-800 rounded" />
+                </motion.div>
+            </div>
+        </div>
+    );
+};
+
+const SkeletonOrg = () => {
+    const variants = {
+        initial: (i: number) => {
+            // Deterministic "random" positions based on index
+            const positions = [
+                { x: -15, y: -10, rotate: -5 },
+                { x: 18, y: 12, rotate: 8 },
+                { x: -12, y: 15, rotate: -3 },
+                { x: 10, y: -12, rotate: 4 },
+            ];
+            const pos = positions[i - 1] || { x: 0, y: 0, rotate: 0 };
+            return {
+                x: pos.x,
+                y: pos.y,
+                rotate: pos.rotate,
+                scale: 0.9,
+            };
+        },
+        hover: (i: number) => ({
+            x: 0,
+            y: 0,
+            rotate: 0,
+            scale: 1,
+            transition: {
+                duration: 0.5,
+                ease: "backOut",
+                delay: i * 0.05,
+            },
+        }),
+    };
+
+    return (
+        <motion.div
+            initial="initial"
+            whileHover="hover"
+            className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col items-center justify-center relative overflow-hidden rounded-lg bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800"
+        >
+            <div className="grid grid-cols-2 gap-2 p-4">
+                {[1, 2, 3, 4].map((i) => (
+                    <motion.div
+                        key={i}
+                        custom={i}
+                        variants={variants}
+                        className={cn(
+                            "h-16 w-20 rounded-lg border flex items-center justify-center",
+                            i === 1 ? "bg-red-50 border-red-100 dark:bg-red-900/20 dark:border-red-800" :
+                                i === 2 ? "bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:border-blue-800" :
+                                    i === 3 ? "bg-green-50 border-green-100 dark:bg-green-900/20 dark:border-green-800" :
+                                        "bg-yellow-50 border-yellow-100 dark:bg-yellow-900/20 dark:border-yellow-800"
+                        )}
+                    >
+                        {i === 1 && <FileText className="w-6 h-6 text-red-400" />}
+                        {i === 2 && <Tags className="w-6 h-6 text-blue-400" />}
+                        {i === 3 && <Brain className="w-6 h-6 text-green-400" />}
+                        {i === 4 && <Lock className="w-6 h-6 text-yellow-400" />}
+                    </motion.div>
+                ))}
+            </div>
+            <div className="absolute bottom-2 text-xs text-neutral-400 font-mono">Auto-Sorting...</div>
+        </motion.div>
+    );
+};
+
+const SkeletonGrammar = () => {
+    return (
+        <motion.div
+            initial="initial"
+            whileHover="hover"
+            className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col items-center justify-center rounded-lg bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 p-4"
+        >
+            <div className="space-y-4 w-full max-w-[200px]">
+                {/* Mistake State */}
+                <motion.div
+                    variants={{
+                        initial: { opacity: 1, x: 0 },
+                        hover: { opacity: 0, x: -20 }
+                    }}
+                    className="flex items-center gap-2 p-2 rounded bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800"
+                >
+                    <X className="w-4 h-4 text-red-500" />
+                    <span className="text-sm text-red-600 dark:text-red-400 line-through decoration-red-500">Teh quik brown</span>
+                </motion.div>
+
+                {/* Corrected State */}
+                <motion.div
+                    variants={{
+                        initial: { opacity: 0, x: 20 },
+                        hover: { opacity: 1, x: 0 }
+                    }}
+                    className="flex items-center gap-2 p-2 rounded bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 absolute top-[35%] w-[calc(100%-2rem)] max-w-[200px]"
+                >
+                    <Check className="w-4 h-4 text-green-500" />
+                    <span className="text-sm text-green-600 dark:text-green-400 font-semibold">The quick brown</span>
+                </motion.div>
+            </div>
+        </motion.div>
+    );
+};
+
+const SkeletonTranslate = () => {
+    return (
+        <div className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col items-center justify-center rounded-lg bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 relative overflow-hidden">
+            <Globe className="absolute text-neutral-100 dark:text-neutral-800 w-32 h-32 -right-4 -bottom-4 opacity-50" />
+
+            <div className="relative z-10 flex flex-col gap-3 w-full px-6">
+                <motion.div
+                    className="self-start bg-neutral-100 dark:bg-neutral-800 rounded-tr-xl rounded-bl-xl rounded-br-xl p-3 text-sm"
+                >
+                    Hello World
+                </motion.div>
+
+                <motion.div
+                    className="self-end bg-blue-500 text-white rounded-tl-xl rounded-bl-xl rounded-br-xl p-3 text-sm flex items-center gap-2"
+                    animate={{
+                        scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                    }}
+                >
+                    <Languages className="w-3 h-3" />
+                    <span className="animate-[pulse_3s_ease-in-out_infinite]">Hola Mundo</span>
+                </motion.div>
+            </div>
+        </div>
+    );
+};
+
+const SkeletonEncryption = () => {
+    return (
+        <motion.div
+            initial="initial"
+            whileHover="hover"
+            className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col items-center justify-center rounded-lg bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800"
+        >
+            <div className="relative">
+                <motion.div
+                    variants={{
+                        initial: { opacity: 1, scale: 1 },
+                        hover: { opacity: 0, scale: 0.8 }
+                    }}
+                    className="absolute inset-0 flex items-center justify-center"
+                >
+                    <FileText className="w-12 h-12 text-neutral-400" />
+                </motion.div>
+
+                <motion.div
+                    variants={{
+                        initial: { opacity: 0, scale: 1.2 },
+                        hover: { opacity: 1, scale: 1 }
+                    }}
+                    className="flex items-center justify-center"
+                >
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-green-500 blur-xl opacity-20 animate-pulse" />
+                        <Lock className="w-12 h-12 text-green-500 relative z-10" />
+                    </div>
+                </motion.div>
+            </div>
+            <motion.p
+                variants={{
+                    initial: { opacity: 0, y: 10 },
+                    hover: { opacity: 1, y: 0 }
+                }}
+                className="mt-4 text-xs font-mono text-green-500"
+            >
+                AES-256 ENCRYPTED
+            </motion.p>
+        </motion.div>
+    );
+};
+
+const items = [
+    {
+        title: "AI Analysis",
+        description: (
+            <span className="text-sm">
+                Get deep insights and summaries from your notes instantly.
+            </span>
+        ),
+        header: <SkeletonAI />,
+        className: "md:col-span-1",
+        icon: <Brain className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+        title: "Smart Organization",
+        description: (
+            <span className="text-sm">
+                Automatically tag and categorize your notes.
+            </span>
+        ),
+        header: <SkeletonOrg />,
+        className: "md:col-span-1",
+        icon: <Tags className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+        title: "Grammar Check",
+        description: (
+            <span className="text-sm">
+                Ensure your notes are clear and error-free.
+            </span>
+        ),
+        header: <SkeletonGrammar />,
+        className: "md:col-span-1",
+        icon: <Sparkles className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+        title: "Secure Encryption",
+        description: (
+            <span className="text-sm">
+                Your thoughts are private and encrypted.
+            </span>
+        ),
+        header: <SkeletonEncryption />,
+        className: "md:col-span-2",
+        icon: <Lock className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+        title: "Global Translation",
+        description: (
+            <span className="text-sm">
+                Translate your notes into any language instantly.
+            </span>
+        ),
+        header: <SkeletonTranslate />,
+        className: "md:col-span-1",
+        icon: <Languages className="h-4 w-4 text-neutral-500" />,
+    },
+];
