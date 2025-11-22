@@ -160,14 +160,12 @@ export default function LandingPage() {
                             </div>
                         </div>
                         <div className="flex items-center justify-center">
-                            <div className="relative w-full rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 shadow-xl group">
-                                <video
-                                    src="/ai_notes.mp4"
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="w-full h-auto object-contain"
+                            <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 shadow-xl group">
+                                <iframe
+                                    src="https://www.youtube.com/embed/wA5QebPbmDo?autoplay=1&mute=1&loop=1&playlist=wA5QebPbmDo"
+                                    className="w-full h-full object-cover"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
                                 />
                             </div>
                         </div>
