@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/moving-border";
 import { Button as ShadcnButton } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import Link from "next/link";
+import { SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function PricingSection() {
     return (
@@ -56,11 +57,20 @@ export default function PricingSection() {
                                 <span>Ad-free Experience</span>
                             </li>
                         </ul>
-                        <Link href="/notes" className="w-full">
-                            <ShadcnButton variant="outline" className="w-full rounded-none border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
-                                Get Started
-                            </ShadcnButton>
-                        </Link>
+                        <SignedOut>
+                            <SignUpButton>
+                                <ShadcnButton variant="outline" className="w-full rounded-none border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
+                                    Get Started
+                                </ShadcnButton>
+                            </SignUpButton>
+                        </SignedOut>
+                        <SignedIn>
+                            <Link href="/notes" className="w-full">
+                                <ShadcnButton variant="outline" className="w-full rounded-none border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900">
+                                    Get Started
+                                </ShadcnButton>
+                            </Link>
+                        </SignedIn>
                     </div>
 
                     {/* AI Basic */}
@@ -95,11 +105,20 @@ export default function PricingSection() {
                                 <span>Ad-free Experience</span>
                             </li>
                         </ul>
-                        <Link href="/notes" className="w-full">
-                            <ShadcnButton className="w-full rounded-none bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
-                                Subscribe
-                            </ShadcnButton>
-                        </Link>
+                        <SignedOut>
+                            <SignUpButton>
+                                <ShadcnButton className="w-full rounded-none bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
+                                    Subscribe
+                                </ShadcnButton>
+                            </SignUpButton>
+                        </SignedOut>
+                        <SignedIn>
+                            <Link href="/notes" className="w-full">
+                                <ShadcnButton className="w-full rounded-none bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
+                                    Subscribe
+                                </ShadcnButton>
+                            </Link>
+                        </SignedIn>
                     </div>
 
                     {/* AI Pro */}
@@ -137,14 +156,28 @@ export default function PricingSection() {
                                 <span>Unlimited AI Usage</span>
                             </li>
                         </ul>
-                        <Link href="/notes" className="w-full flex justify-center">
-                            <Button
-                                borderRadius="0rem"
-                                className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-neutral-800"
-                            >
-                                Go Pro
-                            </Button>
-                        </Link>
+                        <SignedOut>
+                            <SignUpButton>
+                                <div className="w-full flex justify-center">
+                                    <Button
+                                        borderRadius="0rem"
+                                        className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-neutral-800"
+                                    >
+                                        Go Pro
+                                    </Button>
+                                </div>
+                            </SignUpButton>
+                        </SignedOut>
+                        <SignedIn>
+                            <Link href="/notes" className="w-full flex justify-center">
+                                <Button
+                                    borderRadius="0rem"
+                                    className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-neutral-800"
+                                >
+                                    Go Pro
+                                </Button>
+                            </Link>
+                        </SignedIn>
                     </div>
                 </div>
             </div>

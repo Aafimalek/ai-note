@@ -10,7 +10,7 @@ function NewNoteButton() {
 
   const handleClickNewNoteButton = async () => {
     const newNote: Note = {
-      id: uuidv4(),
+      id: "", // Will be set by API
       title: "",
       content: "",
       updatedAt: new Date(),
@@ -19,8 +19,8 @@ function NewNoteButton() {
       isEncrypted: false,
       encryptedContent: undefined,
     };
-    addNote(newNote);
-    setSelectedNote(newNote);
+    const createdNote = await addNote(newNote);
+    setSelectedNote(createdNote);
   };
 
   return (
