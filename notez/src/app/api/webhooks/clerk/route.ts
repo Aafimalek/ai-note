@@ -5,13 +5,13 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { UserController } from '@/controllers/userController';
 import { errorResponse, serverErrorResponse } from '@/helpers/responseHelper';
 
-const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
-
-if (!webhookSecret) {
-  throw new Error('Please add CLERK_WEBHOOK_SECRET to .env.local');
-}
-
 export async function POST(req: Request) {
+  const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+
+  if (!webhookSecret) {
+    throw new Error('Please add CLERK_WEBHOOK_SECRET to .env.local');
+  }
+
   const headerPayload = await headers();
   const svix_id = headerPayload.get('svix-id');
   const svix_timestamp = headerPayload.get('svix-timestamp');
@@ -71,6 +71,9 @@ export async function POST(req: Request) {
 
     if (eventType === 'user.deleted') {
       const { id } = evt.data;
+      if (!id) {
+        return errorResponse('Error occurred -- missing user id', 400);
+      }
       await UserController.deleteUser(id);
       return NextResponse.json({ success: true, message: 'User deleted' });
     }
@@ -81,4 +84,3 @@ export async function POST(req: Request) {
     return serverErrorResponse(error);
   }
 }
-
