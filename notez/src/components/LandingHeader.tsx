@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 import logo from "@/assets/logo.png";
 
@@ -37,9 +38,16 @@ export default function LandingHeader() {
 
                 <div className="flex items-center gap-4">
                     <DarkModeToggle />
-                    <Link href="/notes">
-                        <Button className="active:scale-95 transition-transform">Get Started</Button>
-                    </Link>
+                    <SignedOut>
+                        <SignUpButton>
+                            <Button className="active:scale-95 transition-transform">Get Started</Button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <Link href="/notes">
+                            <Button className="active:scale-95 transition-transform">Get Started</Button>
+                        </Link>
+                    </SignedIn>
                 </div>
             </div>
         </header>

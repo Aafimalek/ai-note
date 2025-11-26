@@ -25,19 +25,27 @@ function DecryptNoteDialog({ isOpen, onClose }: DecryptNoteDialogProps) {
   const { selectedNote, decryptNoteContent } = useNote();
   const { toast } = useToast();
 
-  const handleDecrypt = () => {
+  const handleDecrypt = async () => {
     if (selectedNote && password) {
-      const success = decryptNoteContent(selectedNote.id, password);
-      if (success) {
+      try {
+        const success = await decryptNoteContent(selectedNote.id, password);
+        if (success) {
+          toast({
+            title: "Note Decrypted",
+            description: "Your note has been successfully decrypted.",
+          });
+          onClose();
+        } else {
+          toast({
+            title: "Decryption Failed",
+            description: "Incorrect password. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
         toast({
-          title: "Note Decrypted",
-          description: "Your note has been successfully decrypted.",
-        });
-        onClose();
-      } else {
-        toast({
-          title: "Decryption Failed",
-          description: "Incorrect password. Please try again.",
+          title: "Error",
+          description: "Failed to decrypt note. Please try again.",
           variant: "destructive",
         });
       }

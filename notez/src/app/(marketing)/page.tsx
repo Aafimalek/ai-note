@@ -1,14 +1,40 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Sparkles, Brain } from "lucide-react";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { motion } from "framer-motion";
+import { SignUpButton, SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 
 export default function LandingPage() {
+    const { isSignedIn, isLoaded } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isLoaded && isSignedIn) {
+            router.push("/notes");
+        }
+    }, [isLoaded, isSignedIn, router]);
+
+    // Show loading state while checking auth
+    if (!isLoaded) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-neutral-600 dark:text-neutral-400">Loading...</div>
+            </div>
+        );
+    }
+
+    // If signed in, don't render the landing page (redirect will happen)
+    if (isSignedIn) {
+        return null;
+    }
+
     return (
         <div className="flex flex-col items-center relative min-h-screen">
             {/* Hero Section with Aceternity HeroHighlight */}
@@ -39,7 +65,7 @@ export default function LandingPage() {
                     initial={{ opacity: 0, scale: 0.9, y: 30 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-                    className="mt-12 relative z-20 w-full max-w-2xl mx-auto"
+                    className="mt-12 relative z-20 w-full max-w-5xl mx-auto"
                 >
                     <div className="relative bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden">
                         {/* Window Header */}
@@ -108,11 +134,20 @@ export default function LandingPage() {
                 </motion.div>
 
                 <div className="flex gap-4 justify-center mt-12 relative z-20">
-                    <Link href="/notes">
-                        <Button size="lg" className="rounded-none h-12 px-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
-                            Get Started <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </Link>
+                    <SignedOut>
+                        <SignUpButton>
+                            <Button size="lg" className="rounded-none h-12 px-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
+                                Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <Link href="/notes">
+                            <Button size="lg" className="rounded-none h-12 px-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
+                                Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </Link>
+                    </SignedIn>
                     <Link href="#features">
                         <Button variant="outline" size="lg" className="rounded-none h-12 px-8 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all duration-300 active:scale-95">
                             Learn More
@@ -154,9 +189,16 @@ export default function LandingPage() {
                                 </li>
                             </ul>
                             <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                                <Link href="/notes">
-                                    <Button size="lg" className="rounded-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black">Try it Free</Button>
-                                </Link>
+                                <SignedOut>
+                                    <SignUpButton>
+                                        <Button size="lg" className="rounded-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black">Try it Free</Button>
+                                    </SignUpButton>
+                                </SignedOut>
+                                <SignedIn>
+                                    <Link href="/notes">
+                                        <Button size="lg" className="rounded-none transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 bg-neutral-900 dark:bg-white text-white dark:text-black">Try it Free</Button>
+                                    </Link>
+                                </SignedIn>
                             </div>
                         </div>
                         <div className="flex items-center justify-center">

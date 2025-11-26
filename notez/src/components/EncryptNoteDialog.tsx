@@ -25,14 +25,22 @@ function EncryptNoteDialog({ isOpen, onClose }: EncryptNoteDialogProps) {
   const { selectedNote, encryptNoteContent } = useNote();
   const { toast } = useToast();
 
-  const handleEncrypt = () => {
+  const handleEncrypt = async () => {
     if (selectedNote && password) {
-      encryptNoteContent(selectedNote.id, password);
-      toast({
-        title: "Note Encrypted",
-        description: "Your note has been successfully encrypted.",
-      });
-      onClose();
+      try {
+        await encryptNoteContent(selectedNote.id, password);
+        toast({
+          title: "Note Encrypted",
+          description: "Your note has been successfully encrypted.",
+        });
+        onClose();
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to encrypt note. Please try again.",
+          variant: "destructive",
+        });
+      }
     } else {
       toast({
         title: "Error",
