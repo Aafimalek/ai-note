@@ -3,14 +3,11 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import SidebarGroupContent from "./SidebarGroupContent";
 import useNote from "@/hooks/useNote";
-import ApiKeyManager from "./ApiKeyManager";
 
 function AppSidebar() {
   const { notes } = useNote();
@@ -25,10 +22,6 @@ function AppSidebar() {
           <SidebarGroupContent notes={notes} />
         </SidebarGroup>
       </SidebarContent>
-      <SidebarSeparator />
-      <SidebarFooter>
-        <ApiKeyManager />
-      </SidebarFooter>
     </Sidebar>
   );
 }

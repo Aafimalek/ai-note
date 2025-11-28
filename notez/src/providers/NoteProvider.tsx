@@ -31,15 +31,15 @@ type NoteProviderContextType = {
 
 export const NoteProviderContext = createContext<NoteProviderContextType>({
   notes: [],
-  setNotes: () => {},
+  setNotes: () => { },
   selectedNote: null,
-  setSelectedNote: () => {},
+  setSelectedNote: () => { },
   addNote: async () => ({} as Note),
-  updateNote: async () => {},
-  deleteNote: async () => {},
-  togglePin: async () => {},
-  addTag: async () => {},
-  encryptNoteContent: async () => {},
+  updateNote: async () => { },
+  deleteNote: async () => { },
+  togglePin: async () => { },
+  addTag: async () => { },
+  encryptNoteContent: async () => { },
   decryptNoteContent: async () => false,
   isLoading: false,
 });
