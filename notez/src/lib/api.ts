@@ -125,3 +125,77 @@ export const notesApi = {
   },
 };
 
+
+const BACKEND_API_URL = 'http://localhost:8000';
+
+async function backendRequest<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const response = await fetch(`${BACKEND_API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || 'Backend API request failed');
+  }
+
+  return data as T;
+}
+
+export const backendApi = {
+  glossary: async (text: string): Promise<Record<string, string>> => {
+    return backendRequest('/ai/glossary', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  summary: async (text: string): Promise<{ summary: string }> => {
+    return backendRequest('/ai/summary', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  suggestTags: async (text: string): Promise<{ tags: string[] }> => {
+    return backendRequest('/ai/tags', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  checkGrammar: async (text: string): Promise<{ corrected_text: string }> => {
+    return backendRequest('/ai/grammar', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  translate: async (text: string, targetLanguage: string): Promise<{ translation: string }> => {
+    return backendRequest('/ai/translate', {
+      method: 'POST',
+      body: JSON.stringify({ text, target_language: targetLanguage }),
+    });
+  },
+
+  encrypt: async (text: string): Promise<{ encrypted_text: string }> => {
+    return backendRequest('/security/encrypt', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  decrypt: async (text: string): Promise<{ decrypted_text: string }> => {
+    return backendRequest('/security/decrypt', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+};

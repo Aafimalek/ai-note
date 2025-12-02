@@ -8,6 +8,7 @@ import { Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EncryptNoteDialog from "./EncryptNoteDialog";
 import DecryptNoteDialog from "./DecryptNoteDialog";
+import AIFeaturesMenu from "./AIFeaturesMenu";
 
 let titleUpdateTimeout: NodeJS.Timeout;
 let contentUpdateTimeout: NodeJS.Timeout;
@@ -112,6 +113,24 @@ function NoteTextInput() {
   };
 
 
+
+  const handleUpdateContent = (newContent: string) => {
+    if (editorRef.current) {
+      editorRef.current.innerHTML = newContent;
+      if (selectedNote) {
+        updateNote(selectedNote.id, { content: newContent });
+      }
+    }
+  };
+
+  const handleAddTags = (tags: string[]) => {
+    if (selectedNote) {
+      const currentTags = selectedNote.tags || [];
+      const newTags = [...new Set([...currentTags, ...tags])];
+      updateNote(selectedNote.id, { tags: newTags });
+    }
+  };
+
   const handleEncryptNote = () => {
     if (selectedNote) {
       if (selectedNote.isEncrypted) {
@@ -169,15 +188,21 @@ function NoteTextInput() {
           onFontSize={(size) => applyStyle("fontSize", size)}
           activeFormats={activeFormats}
         />
-        <Button
-          onClick={handleEncryptNote}
-          variant="ghost"
-          size="icon"
-          title="Encrypt Note"
-          className="ml-2"
-        >
-          <Lock />
-        </Button>
+        <div className="ml-auto flex items-center gap-1">
+          <AIFeaturesMenu
+            getNoteContent={() => editorRef.current?.innerHTML || ""}
+            onUpdateContent={handleUpdateContent}
+            onAddTags={handleAddTags}
+          />
+          <Button
+            onClick={handleEncryptNote}
+            variant="ghost"
+            size="icon"
+            title="Encrypt Note"
+          >
+            <Lock />
+          </Button>
+        </div>
       </div>
 
       <div className="custom-scrollbar mb-4 flex h-full w-full resize-none flex-col rounded-md border p-4 text-foreground">
