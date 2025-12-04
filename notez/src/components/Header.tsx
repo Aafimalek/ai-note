@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import DarkModeToggle from "./DarkModeToggle";
 import { SidebarTrigger } from "./ui/sidebar";
+import { UserButton } from "@clerk/nextjs";
 
 import logo from "@/assets/logo.png";
 
@@ -32,8 +33,16 @@ function Header() {
         </h1>
       </Link>
 
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
         <DarkModeToggle />
+        <UserButton 
+          afterSignOutUrl="/"
+          appearance={{
+            elements: {
+              avatarBox: "w-10 h-10"
+            }
+          }}
+        />
       </div>
     </header>
   );
