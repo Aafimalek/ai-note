@@ -4,17 +4,30 @@ from pathlib import Path
 
 # Add parent directory to Python path
 backend_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_dir))
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
 
-from dotenv import load_dotenv
-load_dotenv()
+# Load environment variables
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv is optional
 
 from mangum import Mangum
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import ai, security
 
-app = FastAPI()
+# Import routers after path is set
+try:
+    from routers import ai, security
+except ImportError as e:
+    print(f"Import error: {e}")
+    print(f"Python path: {sys.path}")
+    raise
+
+# Create FastAPI app
+app = FastAPI(title="AI Notes Backend API")
 
 # Get allowed origins from environment or use defaults
 allowed_origins_env = os.environ.get("ALLOWED_ORIGINS", "")
@@ -37,13 +50,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include routers
 app.include_router(ai.router)
 app.include_router(security.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "AI Notes Backend is running"}
+    return {"message": "AI Notes Backend is running", "status": "ok"}
 
-# Handler for Vercel
+# Handler for Vercel - must be named 'handler'
 handler = Mangum(app, lifespan="off")
 
