@@ -8,7 +8,7 @@ import { Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EncryptNoteDialog from "./EncryptNoteDialog";
 import DecryptNoteDialog from "./DecryptNoteDialog";
-import AIFeaturesMenu from "./AIFeaturesMenu";
+import { backendApi } from "@/lib/api";
 
 let titleUpdateTimeout: NodeJS.Timeout;
 let contentUpdateTimeout: NodeJS.Timeout;
@@ -21,6 +21,7 @@ function NoteTextInput() {
   const [showEncryptDialog, setShowEncryptDialog] = useState(false);
   const [showDecryptDialog, setShowDecryptDialog] = useState(false);
   const [activeFormats, setActiveFormats] = useState<ActiveFormats>({});
+  const [isAILoading, setIsAILoading] = useState(false);
 
 
   useEffect(() => {
@@ -131,6 +132,121 @@ function NoteTextInput() {
     }
   };
 
+  // AI Feature Handlers
+  const handleSummary = async () => {
+    const content = editorRef.current?.innerHTML;
+    if (!content) return;
+    setIsAILoading(true);
+    try {
+      const { summary } = await backendApi.summary(content);
+      toast({ title: "AI Summary", description: summary });
+    } catch (error: any) {
+      toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  const handleGlossary = async () => {
+    const content = editorRef.current?.innerHTML;
+    if (!content) {
+      toast({ title: "Note is empty." });
+      return;
+    }
+    setIsAILoading(true);
+    try {
+      const glossary = await backendApi.glossary(content);
+      if (!glossary || Object.keys(glossary).length === 0) {
+        toast({ title: "No glossary terms found." });
+        return;
+      }
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = content;
+      const terms = Object.keys(glossary).sort((a, b) => b.length - a.length);
+      const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const pattern = terms.map(escapeRegExp).join("|");
+      const regex = new RegExp(`\\b(${pattern})\\b`, "gi");
+
+      const walk = (node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.nodeValue || "";
+          if (regex.test(text)) {
+            regex.lastIndex = 0;
+            const newHtml = text.replace(regex, (match) => {
+              const originalTerm = terms.find(t => t.toLowerCase() === match.toLowerCase());
+              const definition = originalTerm ? glossary[originalTerm] : "";
+              return `<span class="glossary-term" title="${definition}">${match}</span>`;
+            });
+            const span = document.createElement("span");
+            span.innerHTML = newHtml;
+            node.parentNode?.replaceChild(span, node);
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as Element;
+          if (element.classList.contains("glossary-term")) return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+      walk(tempDiv);
+      handleUpdateContent(tempDiv.innerHTML);
+      toast({ title: "Glossary Extracted", description: "Important terms have been highlighted." });
+    } catch (error: any) {
+      toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  const handleTags = async () => {
+    const content = editorRef.current?.innerHTML;
+    if (!content) return;
+    setIsAILoading(true);
+    try {
+      const { tags } = await backendApi.suggestTags(content);
+      handleAddTags(tags);
+      toast({ title: "Tags Added", description: `Added tags: ${tags.join(", ")}` });
+    } catch (error: any) {
+      toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  const handleGrammar = async () => {
+    const content = editorRef.current?.innerHTML;
+    if (!content) return;
+    setIsAILoading(true);
+    try {
+      const { corrected_text } = await backendApi.checkGrammar(content);
+      if (corrected_text.trim() === content.trim()) {
+        toast({ title: "Grammar Check", description: "No issues found!" });
+        return;
+      }
+      handleUpdateContent(corrected_text);
+      toast({ title: "Grammar Corrected", description: "Grammar issues have been fixed." });
+    } catch (error: any) {
+      toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  const handleTranslate = async () => {
+    const language = prompt("Enter target language (e.g., Spanish, French):");
+    if (!language) return;
+    const content = editorRef.current?.innerHTML;
+    if (!content) return;
+    setIsAILoading(true);
+    try {
+      const { translation } = await backendApi.translate(content, language);
+      toast({ title: `Translated to ${language}`, description: "Check the note for translated content." });
+    } catch (error: any) {
+      toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
   const handleEncryptNote = () => {
     if (selectedNote) {
       if (selectedNote.isEncrypted) {
@@ -183,22 +299,14 @@ function NoteTextInput() {
           }
           onFontSize={(size) => applyStyle("fontSize", size)}
           activeFormats={activeFormats}
+          onSummary={handleSummary}
+          onGlossary={handleGlossary}
+          onTags={handleTags}
+          onGrammar={handleGrammar}
+          onTranslate={handleTranslate}
+          onEncrypt={handleEncryptNote}
+          isAILoading={isAILoading}
         />
-        <div className="ml-auto flex items-center gap-1">
-          <AIFeaturesMenu
-            getNoteContent={() => editorRef.current?.innerHTML || ""}
-            onUpdateContent={handleUpdateContent}
-            onAddTags={handleAddTags}
-          />
-          <Button
-            onClick={handleEncryptNote}
-            variant="ghost"
-            size="icon"
-            title="Encrypt Note"
-          >
-            <Lock />
-          </Button>
-        </div>
       </div>
 
       <div className="flex-1 min-h-0 overflow-auto border border-sidebar-border rounded-lg p-4 text-foreground">

@@ -7,6 +7,13 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  FileText,
+  BookOpen,
+  Tags,
+  SpellCheck,
+  Languages,
+  Lock,
+  Loader2,
 } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -26,6 +33,14 @@ type ToolbarProps = {
   onAlign: (alignment: "left" | "center" | "right") => void;
   onFontSize: (size: string) => void;
   activeFormats: ActiveFormats;
+  // AI Features
+  onSummary?: () => void;
+  onGlossary?: () => void;
+  onTags?: () => void;
+  onGrammar?: () => void;
+  onTranslate?: () => void;
+  onEncrypt?: () => void;
+  isAILoading?: boolean;
 };
 
 function Toolbar({
@@ -35,9 +50,17 @@ function Toolbar({
   onAlign,
   onFontSize,
   activeFormats,
+  onSummary,
+  onGlossary,
+  onTags,
+  onGrammar,
+  onTranslate,
+  onEncrypt,
+  isAILoading,
 }: ToolbarProps) {
   return (
-    <div className="flex items-center gap-2 rounded-t-md border bg-transparent p-2">
+    <div className="flex items-center gap-2 flex-wrap">
+      {/* Text Formatting */}
       <Button
         variant={activeFormats.bold ? "secondary" : "ghost"}
         size="icon"
@@ -97,6 +120,81 @@ function Toolbar({
         <option value="5">Large</option>
         <option value="7">Huge</option>
       </select>
+
+      {/* Separator */}
+      <div className="w-px h-6 bg-sidebar-border mx-1" />
+
+      {/* AI Features */}
+      {onSummary && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onSummary}
+          disabled={isAILoading}
+          title="AI Summary"
+        >
+          {isAILoading ? <Loader2 className="animate-spin" /> : <FileText />}
+        </Button>
+      )}
+      {onGlossary && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onGlossary}
+          disabled={isAILoading}
+          title="Extract Glossary"
+        >
+          <BookOpen />
+        </Button>
+      )}
+      {onTags && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onTags}
+          disabled={isAILoading}
+          title="Suggest Tags"
+        >
+          <Tags />
+        </Button>
+      )}
+      {onGrammar && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onGrammar}
+          disabled={isAILoading}
+          title="Check Grammar"
+        >
+          <SpellCheck />
+        </Button>
+      )}
+      {onTranslate && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onTranslate}
+          disabled={isAILoading}
+          title="Translate"
+        >
+          <Languages />
+        </Button>
+      )}
+
+      {/* Separator */}
+      <div className="w-px h-6 bg-sidebar-border mx-1" />
+
+      {/* Encrypt */}
+      {onEncrypt && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onEncrypt}
+          title="Encrypt Note"
+        >
+          <Lock />
+        </Button>
+      )}
     </div>
   );
 }
