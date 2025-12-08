@@ -27,7 +27,7 @@ function DeleteNoteButton({ noteId }: Props) {
       <AlertDialogTrigger asChild>
         <Button
           className="absolute right-2 top-1/2 size-7 -translate-y-1/2 p-0 [&_svg]:size-3"
-          variant="ghost"
+          style={{ backgroundColor: 'hsl(217.2 32.6% 17.5%)', border: '1px solid hsl(217.2 32.6% 25%)' }}
         >
           <Trash2 />
         </Button>

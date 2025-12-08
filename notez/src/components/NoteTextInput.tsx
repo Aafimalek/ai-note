@@ -9,6 +9,13 @@ import { useToast } from "@/hooks/use-toast";
 import EncryptNoteDialog from "./EncryptNoteDialog";
 import DecryptNoteDialog from "./DecryptNoteDialog";
 import { backendApi } from "@/lib/api";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 
 let titleUpdateTimeout: NodeJS.Timeout;
 let contentUpdateTimeout: NodeJS.Timeout;
@@ -22,6 +29,11 @@ function NoteTextInput() {
   const [showDecryptDialog, setShowDecryptDialog] = useState(false);
   const [activeFormats, setActiveFormats] = useState<ActiveFormats>({});
   const [isAILoading, setIsAILoading] = useState(false);
+  const [aiResultDialog, setAiResultDialog] = useState<{
+    open: boolean;
+    title: string;
+    content: React.ReactNode;
+  }>({ open: false, title: "", content: null });
 
 
   useEffect(() => {
@@ -139,7 +151,11 @@ function NoteTextInput() {
     setIsAILoading(true);
     try {
       const { summary } = await backendApi.summary(content);
-      toast({ title: "AI Summary", description: summary });
+      setAiResultDialog({
+        open: true,
+        title: "AI Summary",
+        content: <p className="whitespace-pre-wrap">{summary}</p>,
+      });
     } catch (error: any) {
       toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
     } finally {
@@ -204,7 +220,17 @@ function NoteTextInput() {
     try {
       const { tags } = await backendApi.suggestTags(content);
       handleAddTags(tags);
-      toast({ title: "Tags Added", description: `Added tags: ${tags.join(", ")}` });
+      setAiResultDialog({
+        open: true,
+        title: "Tags Added",
+        content: (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag: string, i: number) => (
+              <span key={i} className="px-2 py-1 bg-primary/20 rounded-md text-sm">{tag}</span>
+            ))}
+          </div>
+        ),
+      });
     } catch (error: any) {
       toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
     } finally {
@@ -239,7 +265,11 @@ function NoteTextInput() {
     setIsAILoading(true);
     try {
       const { translation } = await backendApi.translate(content, language);
-      toast({ title: `Translated to ${language}`, description: "Check the note for translated content." });
+      setAiResultDialog({
+        open: true,
+        title: `Translated to ${language}`,
+        content: <p className="whitespace-pre-wrap">{translation}</p>,
+      });
     } catch (error: any) {
       toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
     } finally {
@@ -345,6 +375,16 @@ function NoteTextInput() {
         isOpen={showDecryptDialog}
         onClose={() => setShowDecryptDialog(false)}
       />
+      <Dialog open={aiResultDialog.open} onOpenChange={(open) => setAiResultDialog((prev) => ({ ...prev, open }))}>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>{aiResultDialog.title}</DialogTitle>
+            <DialogDescription asChild>
+              <div className="mt-4 text-foreground">{aiResultDialog.content}</div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
