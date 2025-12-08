@@ -20,7 +20,7 @@ function PinNoteButton({ noteId, pinned }: Props) {
       }}
       variant="ghost"
       size="icon"
-      className="absolute right-10 top-1/2 size-7 -translate-y-1/2 p-0 opacity-0 group-hover/item:opacity-100"
+      className="absolute right-10 top-1/2 size-7 -translate-y-1/2 p-0"
       title={pinned ? "Unpin note" : "Pin note"}
     >
       {pinned ? <PinOff className="size-4" /> : <Pin className="size-4" />}

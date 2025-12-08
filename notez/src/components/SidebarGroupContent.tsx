@@ -59,8 +59,8 @@ function SidebarGroupContent({ notes }: Props) {
 
       {filteredNotes.length > 0 ? (
         <SidebarMenu className="mt-4">
-          {filteredNotes.map((note) => (
-            <SidebarMenuItem key={note.id} className="group/item">
+          {filteredNotes.map((note, index) => (
+            <SidebarMenuItem key={note.id || `note-${index}`} className="group/item border-b border-sidebar-border pb-2 mb-2">
               <SelectNoteButton note={note} />
               <PinNoteButton noteId={note.id} pinned={note.pinned} />
               <DeleteNoteButton noteId={note.id} />

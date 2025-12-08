@@ -19,9 +19,8 @@ function SelectNoteButton({ note }: Props) {
   return (
     <SidebarMenuButton
       onClick={() => setSelectedNote(note)}
-      className={`h-auto items-start gap-0 pr-12 ${
-        note.id === selectedNote?.id && "bg-sidebar-accent/50"
-      }`}
+      className={`h-auto items-start gap-0 pr-12 ${note.id === selectedNote?.id && "bg-sidebar-accent/50"
+        }`}
     >
       <div className="flex h-fit flex-col gap-1">
         <div className="flex items-center gap-2">

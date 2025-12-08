@@ -26,7 +26,7 @@ export class NoteController {
    */
   static async createNote(data: CreateNoteData): Promise<INote> {
     await connectDB();
-    
+
     const note = new Note({
       userId: data.userId,
       title: data.title || 'Untitled',
@@ -36,7 +36,7 @@ export class NoteController {
       isEncrypted: data.isEncrypted || false,
       encryptedContent: data.encryptedContent,
     });
-    
+
     await note.save();
     return note;
   }
@@ -91,7 +91,7 @@ export class NoteController {
     await connectDB();
     const note = await Note.findOne({ _id: noteId, userId });
     if (!note) return null;
-    
+
     note.pinned = !note.pinned;
     note.updatedAt = new Date();
     await note.save();
@@ -109,13 +109,13 @@ export class NoteController {
     await connectDB();
     const note = await Note.findOne({ _id: noteId, userId });
     if (!note) return null;
-    
+
     if (!note.tags.includes(tag)) {
       note.tags.push(tag);
       note.updatedAt = new Date();
       await note.save();
     }
-    
+
     return note;
   }
 
@@ -130,7 +130,7 @@ export class NoteController {
     await connectDB();
     const note = await Note.findOne({ _id: noteId, userId });
     if (!note) return null;
-    
+
     note.tags = note.tags.filter((t) => t !== tag);
     note.updatedAt = new Date();
     await note.save();

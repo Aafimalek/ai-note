@@ -4,7 +4,8 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import SidebarGroupContent from "./SidebarGroupContent";
 import useNote from "@/hooks/useNote";
@@ -14,11 +15,14 @@ function AppSidebar() {
 
   return (
     <Sidebar>
+      <SidebarHeader className="border-b border-sidebar-border p-3">
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-lg">Your Notes</span>
+          <SidebarTrigger />
+        </div>
+      </SidebarHeader>
       <SidebarContent className="custom-scrollbar">
         <SidebarGroup>
-          <SidebarGroupLabel className="mb-2 mt-2 text-lg">
-            Your Notes
-          </SidebarGroupLabel>
           <SidebarGroupContent notes={notes} />
         </SidebarGroup>
       </SidebarContent>

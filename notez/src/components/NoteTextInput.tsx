@@ -145,11 +145,7 @@ function NoteTextInput() {
   };
 
   if (!selectedNote) {
-    return (
-      <div className="flex h-full max-w-4xl w-full items-center justify-center">
-        <p>Select a note to start editing</p>
-      </div>
-    );
+    return null;
   }
 
   if (selectedNote.isEncrypted) {
@@ -174,8 +170,8 @@ function NoteTextInput() {
   }
 
   return (
-    <div className="flex h-full w-full max-w-4xl flex-col">
-      <div className="flex items-center">
+    <div className="flex h-full w-full flex-col p-4">
+      <div className="flex items-center mb-4 border border-sidebar-border rounded-lg p-2 bg-sidebar">
         <Toolbar
           onBold={() => applyStyle("bold")}
           onItalic={() => applyStyle("italic")}
@@ -205,12 +201,12 @@ function NoteTextInput() {
         </div>
       </div>
 
-      <div className="custom-scrollbar mb-4 flex h-full w-full resize-none flex-col rounded-md border p-4 text-foreground">
+      <div className="flex-1 min-h-0 overflow-auto border border-sidebar-border rounded-lg p-4 text-foreground">
         <input
           ref={titleRef}
           type="text"
           onInput={handleTitleInput}
-          className="border-none bg-transparent text-4xl font-bold text-foreground focus:outline-none"
+          className="border-none bg-transparent text-4xl font-bold text-foreground focus:outline-none placeholder:text-muted-foreground"
           placeholder="Untitled Note"
         />
         {selectedNote && selectedNote.tags && selectedNote.tags.length > 0 && (

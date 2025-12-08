@@ -109,7 +109,7 @@ function NoteProvider({ children }: { children: React.ReactNode }) {
       } else {
         // New note - create in DB
         const createdNote = await notesApi.create({
-          title: note.title || "",
+          title: note.title || "Untitled",
           content: note.content || "",
           tags: note.tags || [],
           pinned: note.pinned || false,
