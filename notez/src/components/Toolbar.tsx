@@ -59,9 +59,9 @@ function Toolbar({
   isAILoading,
 }: ToolbarProps) {
   return (
-    <div className="flex items-center w-full gap-4">
-      {/* Text Formatting Group */}
-      <div className="flex items-center gap-1">
+    <div className="flex items-center w-full">
+      {/* Text Style Buttons */}
+      <div className="flex items-center">
         <Button
           variant={activeFormats.bold ? "secondary" : "ghost"}
           size="icon"
@@ -86,7 +86,12 @@ function Toolbar({
         >
           <Underline />
         </Button>
-        <div className="w-px h-6 bg-sidebar-border mx-1" />
+      </div>
+
+      <div className="w-px h-6 bg-sidebar-border mx-2" />
+
+      {/* Alignment Buttons */}
+      <div className="flex items-center">
         <Button
           variant={activeFormats.justifyLeft ? "secondary" : "ghost"}
           size="icon"
@@ -111,21 +116,27 @@ function Toolbar({
         >
           <AlignRight />
         </Button>
-        <select
-          onChange={(e) => onFontSize(e.target.value)}
-          className="rounded-md border bg-background px-2 py-1 text-sm text-foreground hover:bg-accent"
-          title="Font Size"
-          defaultValue="3"
-        >
-          <option value="1">Small</option>
-          <option value="3">Normal</option>
-          <option value="5">Large</option>
-          <option value="7">Huge</option>
-        </select>
       </div>
 
-      {/* AI Features Group */}
-      <div className="flex items-center gap-1">
+      <div className="w-px h-6 bg-sidebar-border mx-2" />
+
+      {/* Font Size */}
+      <select
+        onChange={(e) => onFontSize(e.target.value)}
+        className="rounded-md border border-sidebar-border bg-sidebar px-2 py-1 text-sm text-foreground hover:bg-accent cursor-pointer"
+        title="Font Size"
+        defaultValue="3"
+      >
+        <option value="1" className="bg-sidebar text-foreground">Small</option>
+        <option value="3" className="bg-sidebar text-foreground">Normal</option>
+        <option value="5" className="bg-sidebar text-foreground">Large</option>
+        <option value="7" className="bg-sidebar text-foreground">Huge</option>
+      </select>
+
+      <div className="w-px h-6 bg-sidebar-border mx-2" />
+
+      {/* AI Features */}
+      <div className="flex items-center">
         {onSummary && (
           <Button
             variant="ghost"
@@ -181,18 +192,21 @@ function Toolbar({
             <Languages />
           </Button>
         )}
-        <div className="w-px h-6 bg-sidebar-border mx-1" />
-        {onEncrypt && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onEncrypt}
-            title="Encrypt Note"
-          >
-            <Lock />
-          </Button>
-        )}
       </div>
+
+      <div className="w-px h-6 bg-sidebar-border mx-2" />
+
+      {/* Encrypt */}
+      {onEncrypt && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onEncrypt}
+          title="Encrypt Note"
+        >
+          <Lock />
+        </Button>
+      )}
     </div>
   );
 }
