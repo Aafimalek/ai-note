@@ -11,7 +11,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
 import useNote from "@/hooks/useNote";
 
@@ -25,12 +24,12 @@ function DeleteNoteButton({ noteId }: Props) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          className="absolute right-2 top-1/2 size-7 -translate-y-1/2 p-0 [&_svg]:size-3"
-          style={{ backgroundColor: 'hsl(217.2 32.6% 17.5%)', border: '1px solid hsl(217.2 32.6% 25%)' }}
+        <button
+          className="absolute right-2 top-1/2 size-7 -translate-y-1/2 p-0 rounded-md flex items-center justify-center border-2 border-foreground/30"
+          style={{ backgroundColor: 'hsl(var(--sidebar-background))' }}
         >
-          <Trash2 />
-        </Button>
+          <Trash2 className="size-3" />
+        </button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -56,3 +55,4 @@ function DeleteNoteButton({ noteId }: Props) {
 }
 
 export default DeleteNoteButton;
+

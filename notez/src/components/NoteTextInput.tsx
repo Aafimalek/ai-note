@@ -268,7 +268,7 @@ function NoteTextInput() {
       setAiResultDialog({
         open: true,
         title: `Translated to ${language}`,
-        content: <p className="whitespace-pre-wrap">{translation}</p>,
+        content: <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: translation }} />,
       });
     } catch (error: any) {
       toast({ title: "AI Action Failed", description: error.message, variant: "destructive" });
