@@ -266,10 +266,10 @@ function NoteTextInput() {
 
   if (selectedNote.isEncrypted) {
     return (
-      <div className="flex h-full max-w-4xl w-full flex-col items-center justify-center gap-4">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 text-center">
         <Lock className="size-16 text-muted-foreground" />
         <h2 className="text-2xl font-bold">This note is locked</h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground max-w-md">
           Enter the password to decrypt and view this note.
         </p>
         <Button onClick={() => setShowDecryptDialog(true)}>Unlock Note</Button>
@@ -286,8 +286,8 @@ function NoteTextInput() {
   }
 
   return (
-    <div className="flex h-full w-full flex-col p-4">
-      <div className="flex items-center mb-4 border border-sidebar-border rounded-lg p-2 bg-sidebar">
+    <div className="flex h-full w-full flex-col p-2">
+      <div className="flex items-center mb-2 border border-sidebar-border rounded-lg p-2 bg-sidebar">
         <Toolbar
           onBold={() => applyStyle("bold")}
           onItalic={() => applyStyle("italic")}

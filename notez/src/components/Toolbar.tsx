@@ -59,142 +59,140 @@ function Toolbar({
   isAILoading,
 }: ToolbarProps) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      {/* Text Formatting */}
-      <Button
-        variant={activeFormats.bold ? "secondary" : "ghost"}
-        size="icon"
-        onClick={onBold}
-        title="Bold"
-      >
-        <Bold />
-      </Button>
-      <Button
-        variant={activeFormats.italic ? "secondary" : "ghost"}
-        size="icon"
-        onClick={onItalic}
-        title="Italic"
-      >
-        <Italic />
-      </Button>
-      <Button
-        variant={activeFormats.underline ? "secondary" : "ghost"}
-        size="icon"
-        onClick={onUnderline}
-        title="Underline"
-      >
-        <Underline />
-      </Button>
-      <Button
-        variant={activeFormats.justifyLeft ? "secondary" : "ghost"}
-        size="icon"
-        onClick={() => onAlign("left")}
-        title="Align Left"
-      >
-        <AlignLeft />
-      </Button>
-      <Button
-        variant={activeFormats.justifyCenter ? "secondary" : "ghost"}
-        size="icon"
-        onClick={() => onAlign("center")}
-        title="Align Center"
-      >
-        <AlignCenter />
-      </Button>
-      <Button
-        variant={activeFormats.justifyRight ? "secondary" : "ghost"}
-        size="icon"
-        onClick={() => onAlign("right")}
-        title="Align Right"
-      >
-        <AlignRight />
-      </Button>
-      <select
-        onChange={(e) => onFontSize(e.target.value)}
-        className="rounded-md border bg-background p-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
-        title="Font Size"
-        defaultValue="3"
-      >
-        <option value="1">Small</option>
-        <option value="3">Normal</option>
-        <option value="5">Large</option>
-        <option value="7">Huge</option>
-      </select>
+    <div className="flex items-center w-full gap-4">
+      {/* Text Formatting Group */}
+      <div className="flex items-center gap-1">
+        <Button
+          variant={activeFormats.bold ? "secondary" : "ghost"}
+          size="icon"
+          onClick={onBold}
+          title="Bold"
+        >
+          <Bold />
+        </Button>
+        <Button
+          variant={activeFormats.italic ? "secondary" : "ghost"}
+          size="icon"
+          onClick={onItalic}
+          title="Italic"
+        >
+          <Italic />
+        </Button>
+        <Button
+          variant={activeFormats.underline ? "secondary" : "ghost"}
+          size="icon"
+          onClick={onUnderline}
+          title="Underline"
+        >
+          <Underline />
+        </Button>
+        <div className="w-px h-6 bg-sidebar-border mx-1" />
+        <Button
+          variant={activeFormats.justifyLeft ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => onAlign("left")}
+          title="Align Left"
+        >
+          <AlignLeft />
+        </Button>
+        <Button
+          variant={activeFormats.justifyCenter ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => onAlign("center")}
+          title="Align Center"
+        >
+          <AlignCenter />
+        </Button>
+        <Button
+          variant={activeFormats.justifyRight ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => onAlign("right")}
+          title="Align Right"
+        >
+          <AlignRight />
+        </Button>
+        <select
+          onChange={(e) => onFontSize(e.target.value)}
+          className="rounded-md border bg-background px-2 py-1 text-sm text-foreground hover:bg-accent"
+          title="Font Size"
+          defaultValue="3"
+        >
+          <option value="1">Small</option>
+          <option value="3">Normal</option>
+          <option value="5">Large</option>
+          <option value="7">Huge</option>
+        </select>
+      </div>
 
-      {/* Separator */}
-      <div className="w-px h-6 bg-sidebar-border mx-1" />
-
-      {/* AI Features */}
-      {onSummary && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onSummary}
-          disabled={isAILoading}
-          title="AI Summary"
-        >
-          {isAILoading ? <Loader2 className="animate-spin" /> : <FileText />}
-        </Button>
-      )}
-      {onGlossary && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onGlossary}
-          disabled={isAILoading}
-          title="Extract Glossary"
-        >
-          <BookOpen />
-        </Button>
-      )}
-      {onTags && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onTags}
-          disabled={isAILoading}
-          title="Suggest Tags"
-        >
-          <Tags />
-        </Button>
-      )}
-      {onGrammar && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onGrammar}
-          disabled={isAILoading}
-          title="Check Grammar"
-        >
-          <SpellCheck />
-        </Button>
-      )}
-      {onTranslate && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onTranslate}
-          disabled={isAILoading}
-          title="Translate"
-        >
-          <Languages />
-        </Button>
-      )}
-
-      {/* Separator */}
-      <div className="w-px h-6 bg-sidebar-border mx-1" />
-
-      {/* Encrypt */}
-      {onEncrypt && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onEncrypt}
-          title="Encrypt Note"
-        >
-          <Lock />
-        </Button>
-      )}
+      {/* AI Features Group */}
+      <div className="flex items-center gap-1">
+        {onSummary && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSummary}
+            disabled={isAILoading}
+            title="AI Summary"
+          >
+            {isAILoading ? <Loader2 className="animate-spin" /> : <FileText />}
+          </Button>
+        )}
+        {onGlossary && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onGlossary}
+            disabled={isAILoading}
+            title="Extract Glossary"
+          >
+            <BookOpen />
+          </Button>
+        )}
+        {onTags && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onTags}
+            disabled={isAILoading}
+            title="Suggest Tags"
+          >
+            <Tags />
+          </Button>
+        )}
+        {onGrammar && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onGrammar}
+            disabled={isAILoading}
+            title="Check Grammar"
+          >
+            <SpellCheck />
+          </Button>
+        )}
+        {onTranslate && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onTranslate}
+            disabled={isAILoading}
+            title="Translate"
+          >
+            <Languages />
+          </Button>
+        )}
+        <div className="w-px h-6 bg-sidebar-border mx-1" />
+        {onEncrypt && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onEncrypt}
+            title="Encrypt Note"
+          >
+            <Lock />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
