@@ -40,6 +40,7 @@ else:
         "http://127.0.0.1:3000",
         "https://ai-notez.fun",
         "https://ai-notes-snowy-delta.vercel.app",
+        "https://www.ai-notez.fun"
     ]
 
 app.add_middleware(

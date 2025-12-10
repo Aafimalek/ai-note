@@ -11,7 +11,8 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://ai-notez.fun"
+    "https://ai-notez.fun",
+    "https://www.ai-notez.fun"
 ]
 
 app.add_middleware(
