@@ -36,11 +36,12 @@ if allowed_origins_env:
 else:
     # Default origins - add your Vercel frontend URL here
     allowed_origins = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://ai-notez.fun",
-        "https://ai-notes-snowy-delta.vercel.app",
-        "https://www.ai-notez.fun"
+        # "http://localhost:3000",
+        # "http://127.0.0.1:3000",
+        # "https://ai-notez.fun",
+        # "https://ai-notes-snowy-delta.vercel.app",
+        # "https://www.ai-notez.fun"
+        "*"
     ]
 
 app.add_middleware(
