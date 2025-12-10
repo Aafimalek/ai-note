@@ -27,13 +27,8 @@ except ImportError as e:
     print(f"Python path: {sys.path}")
     raise
 
-# Allowed origins
-ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://ai-notez.fun",
-    "https://www.ai-notez.fun",
-]
+# Allowed origins - use wildcard for simplicity since credentials aren't strictly needed
+ALLOWED_ORIGINS = ["*"]
 
 # Custom CORS middleware that properly handles preflight
 class CORSMiddleware(BaseHTTPMiddleware):

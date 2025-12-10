@@ -127,7 +127,8 @@ export const notesApi = {
 };
 
 
-const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://ai-note-silk.vercel.app';
+
+const BACKEND_API_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || 'https://ai-note-silk.vercel.app').replace(/\/$/, '');
 
 async function backendRequest<T>(
   endpoint: string,
