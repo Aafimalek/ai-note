@@ -11,6 +11,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import Script from "next/script";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -27,6 +28,14 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5657915193947723"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        </head>
         <body className={outfit.className}>
           <ThemeProvider
             attribute="class"
