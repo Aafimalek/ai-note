@@ -4,9 +4,100 @@ import { Button } from "@/components/ui/moving-border";
 import { Button as ShadcnButton } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import Link from "next/link";
-import { SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignUpButton, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+
+// Product IDs from Dodo Payments - Replace these with your actual product IDs
+const PRODUCT_IDS = {
+    AI_BASIC: process.env.NEXT_PUBLIC_DODO_PRODUCT_ID_BASIC || "pdt_ai_basic", // Replace with your AI Basic product ID
+    AI_PRO: process.env.NEXT_PUBLIC_DODO_PRODUCT_ID_PRO || "pdt_ai_pro", // Replace with your AI Pro product ID
+};
 
 export default function PricingSection() {
+    const { user } = useUser();
+    const { toast } = useToast();
+    const [loading, setLoading] = useState<string | null>(null);
+
+    const handleCheckout = async (productId: string, planName: string) => {
+        try {
+            setLoading(productId);
+
+            const response = await fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    // Checkout session format requires product_cart as an array
+                    // See: https://docs.dodopayments.com/developer-resources/checkout-session
+                    product_cart: [
+                        {
+                            product_id: productId,
+                            quantity: 1,
+                        },
+                    ],
+                    customer: {
+                        email: user?.emailAddresses[0]?.emailAddress,
+                        full_name: user?.fullName || `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+                    },
+                    // Add metadata to track which plan was selected
+                    metadata: {
+                        plan: planName,
+                        user_id: user?.id,
+                    },
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to create checkout session');
+            }
+
+            const data = await response.json();
+
+            if (data.checkout_url) {
+                // Redirect to Dodo Payments checkout
+                window.location.href = data.checkout_url;
+            } else {
+                throw new Error('No checkout URL received');
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+            toast({
+                title: "Checkout Failed",
+                description: error instanceof Error ? error.message : "Unable to start checkout. Please try again.",
+                variant: "destructive",
+            });
+            setLoading(null);
+        }
+    };
+
+    const handleCustomerPortal = async () => {
+        try {
+            // You'll need to get the customer_id from your database
+            // For now, this is a placeholder - you'll need to fetch it from your backend
+            const customerId = user?.publicMetadata?.dodoCustomerId as string;
+
+            if (!customerId) {
+                toast({
+                    title: "No Subscription Found",
+                    description: "You don't have an active subscription.",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            window.location.href = `/customer-portal?customer_id=${customerId}`;
+        } catch (error) {
+            console.error('Customer portal error:', error);
+            toast({
+                title: "Error",
+                description: "Unable to open customer portal. Please try again.",
+                variant: "destructive",
+            });
+        }
+    };
     return (
         <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 relative">
             <div className="container px-4 md:px-6 mx-auto">
@@ -113,11 +204,13 @@ export default function PricingSection() {
                             </SignUpButton>
                         </SignedOut>
                         <SignedIn>
-                            <Link href="/notes" className="w-full">
-                                <ShadcnButton className="w-full rounded-none bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200">
-                                    Subscribe
-                                </ShadcnButton>
-                            </Link>
+                            <ShadcnButton
+                                className="w-full rounded-none bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200"
+                                onClick={() => handleCheckout(PRODUCT_IDS.AI_BASIC, 'AI Basic')}
+                                disabled={loading === PRODUCT_IDS.AI_BASIC}
+                            >
+                                {loading === PRODUCT_IDS.AI_BASIC ? 'Processing...' : 'Subscribe'}
+                            </ShadcnButton>
                         </SignedIn>
                     </div>
 
@@ -169,14 +262,16 @@ export default function PricingSection() {
                             </SignUpButton>
                         </SignedOut>
                         <SignedIn>
-                            <Link href="/notes" className="w-full flex justify-center">
+                            <div className="w-full flex justify-center">
                                 <Button
                                     borderRadius="0rem"
                                     className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-neutral-800"
+                                    onClick={() => handleCheckout(PRODUCT_IDS.AI_PRO, 'AI Pro')}
+                                    disabled={loading === PRODUCT_IDS.AI_PRO}
                                 >
-                                    Go Pro
+                                    {loading === PRODUCT_IDS.AI_PRO ? 'Processing...' : 'Go Pro'}
                                 </Button>
-                            </Link>
+                            </div>
                         </SignedIn>
                     </div>
                 </div>
