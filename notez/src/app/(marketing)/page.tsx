@@ -15,11 +15,11 @@ export default function LandingPage() {
     const { isSignedIn, isLoaded } = useAuth();
     const router = useRouter();
 
-    useEffect(() => {
-        if (isLoaded && isSignedIn) {
-            router.push("/notes");
-        }
-    }, [isLoaded, isSignedIn, router]);
+    // useEffect(() => {
+    //     if (isLoaded && isSignedIn) {
+    //         router.push("/notes");
+    //     }
+    // }, [isLoaded, isSignedIn, router]);
 
     // Show loading state while checking auth
     if (!isLoaded) {
@@ -30,10 +30,10 @@ export default function LandingPage() {
         );
     }
 
-    // If signed in, don't render the landing page (redirect will happen)
-    if (isSignedIn) {
-        return null;
-    }
+    // // If signed in, don't render the landing page (redirect will happen)
+    // if (isSignedIn) {
+    //     return null;
+    // }
 
     return (
         <div className="flex flex-col items-center relative min-h-screen">
