@@ -1,5 +1,7 @@
 // app/api/webhook/dodo-payments/route.ts
 import { Webhooks } from '@dodopayments/nextjs'
+import { UserController } from '@/controllers/userController';
+import { mapDodoPlanToSubscriptionPlan, mapDodoStatusToSubscriptionStatus } from '@/helpers/subscriptionHelper';
 
 export const POST = Webhooks({
   webhookKey: process.env.DODO_WEBHOOK_SECRET!,
@@ -12,11 +14,54 @@ export const POST = Webhooks({
   },
 
   // Payment event handlers
-  onPaymentSucceeded: async (payload) => {
-    console.log('Payment Succeeded:', payload);
-    // Handle successful payment
-    // Update user subscription status in your database
-    // Example: await updateUserSubscription(payload.customer_id, 'active');
+  onPaymentSucceeded: async (payload: any) => {
+    console.log('=== Payment Succeeded Webhook ===');
+    console.log('Full Payload:', JSON.stringify(payload, null, 2));
+    try {
+      const customerId = payload.customer?.customer_id;
+      const customerEmail = payload.customer?.email;
+      const subscriptionId = payload.subscription_id || payload.subscription?.id;
+      const planName = payload.metadata?.plan;
+
+      console.log('Extracted Data:', { customerId, customerEmail, subscriptionId, planName });
+
+      if (customerEmail) {
+        // Try to find user by email (case-insensitive)
+        const user = await UserController.getUserByDodoEmail(customerEmail);
+        console.log('User found by email:', user ? { email: user.email, clerkId: user.clerkId } : 'NOT FOUND');
+
+        if (user) {
+          // Update customer_id if not set
+          if (customerId && !user.dodoCustomerId) {
+            await UserController.updateSubscription(user.clerkId, {
+              dodoCustomerId: customerId,
+            });
+            console.log(`✓ Updated customer ID for user ${user.email}`);
+          }
+
+          // If this is a subscription payment and we have plan info, activate it
+          if (subscriptionId && planName) {
+            const plan = mapDodoPlanToSubscriptionPlan(planName);
+            await UserController.updateSubscription(user.clerkId, {
+              subscriptionPlan: plan,
+              subscriptionStatus: 'active',
+              dodoCustomerId: customerId || user.dodoCustomerId,
+              subscriptionId: subscriptionId,
+            });
+            console.log(`✓ Activated subscription for user ${user.email} - Plan: ${plan}`);
+          }
+        } else {
+          console.error('❌ User not found for email:', customerEmail);
+          console.log('Available user emails in database (for debugging):');
+          // This would require a different query, but for now just log the issue
+        }
+      } else {
+        console.warn('⚠️ No customer email found in payment payload');
+      }
+    } catch (error) {
+      console.error('❌ Error handling payment success:', error);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    }
   },
 
   onPaymentFailed: async (payload) => {
@@ -47,45 +92,185 @@ export const POST = Webhooks({
   },
 
   // Subscription event handlers (CRITICAL for your use case)
-  onSubscriptionActive: async (payload) => {
-    console.log('Subscription Active:', payload);
-    // Update user subscription to active in your database
-    // This is important for granting access to AI features
+  onSubscriptionActive: async (payload: any) => {
+    console.log('=== Subscription Active Webhook ===');
+    console.log('Full Payload:', JSON.stringify(payload, null, 2));
+    try {
+      // Payload structure: { type, data: { customer: { customer_id, email }, subscription_id, metadata: { plan }, ... } }
+      const data = payload.data || payload;
+      const customerId = data.customer?.customer_id || payload.customer?.id;
+      const subscriptionId = data.subscription_id || payload.subscription_id || payload.id;
+      const customerEmail = data.customer?.email || data.customer_email || payload.customer?.email || payload.customer_email || payload.email;
+      const planName = data.metadata?.plan || data.plan?.name || data.product?.name || payload.metadata?.plan || payload.plan?.name || 'AI Basic';
+
+      console.log('Extracted Data:', { customerId, subscriptionId, customerEmail, planName });
+
+      // Find user by customer ID first, then by email
+      let user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      console.log('User found by customer ID:', user ? { email: user.email, clerkId: user.clerkId } : 'NOT FOUND');
+
+      if (!user && customerEmail) {
+        user = await UserController.getUserByDodoEmail(customerEmail);
+        console.log('User found by email:', user ? { email: user.email, clerkId: user.clerkId } : 'NOT FOUND');
+      }
+
+      if (user) {
+        const plan = mapDodoPlanToSubscriptionPlan(planName);
+        const updateData = {
+          subscriptionPlan: plan,
+          subscriptionStatus: 'active' as const,
+          dodoCustomerId: customerId || user.dodoCustomerId,
+          subscriptionId: subscriptionId,
+          subscriptionExpiresAt: payload.current_period_end
+            ? new Date(payload.current_period_end * 1000)
+            : payload.expires_at
+              ? new Date(payload.expires_at * 1000)
+              : undefined,
+        };
+
+        console.log('Updating subscription with data:', updateData);
+        const updatedUser = await UserController.updateSubscription(user.clerkId, updateData);
+        console.log(`✓ Successfully updated subscription for user ${user.email} to ${plan}`);
+        console.log('Updated user data:', {
+          plan: updatedUser?.subscriptionPlan,
+          status: updatedUser?.subscriptionStatus,
+          customerId: updatedUser?.dodoCustomerId,
+        });
+      } else {
+        console.error('❌ User not found for subscription activation');
+        console.error('Search criteria:', { customerId, customerEmail });
+        console.error('Full payload for debugging:', JSON.stringify(payload, null, 2));
+      }
+    } catch (error) {
+      console.error('❌ Error handling subscription active:', error);
+      console.error('Error details:', error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+      } : error);
+    }
   },
 
-  onSubscriptionRenewed: async (payload) => {
+  onSubscriptionRenewed: async (payload: any) => {
     console.log('Subscription Renewed:', payload);
-    // Handle subscription renewal
-    // Extend subscription period in your database
+    try {
+      const customerId = payload.customer_id || payload.customer?.id;
+      const user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      if (user) {
+        await UserController.updateSubscription(user.clerkId, {
+          subscriptionStatus: 'active',
+          subscriptionExpiresAt: payload.current_period_end
+            ? new Date(payload.current_period_end * 1000)
+            : undefined,
+        });
+        console.log(`Renewed subscription for user ${user.email}`);
+      }
+    } catch (error) {
+      console.error('Error handling subscription renewal:', error);
+    }
   },
 
-  onSubscriptionCancelled: async (payload) => {
+  onSubscriptionCancelled: async (payload: any) => {
     console.log('Subscription Cancelled:', payload);
-    // Handle subscription cancellation
-    // Update subscription status, revoke access to premium features
+    try {
+      const customerId = payload.customer_id || payload.customer?.id;
+      const user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      if (user) {
+        await UserController.updateSubscription(user.clerkId, {
+          subscriptionStatus: 'cancelled',
+        });
+        console.log(`Cancelled subscription for user ${user.email}`);
+      }
+    } catch (error) {
+      console.error('Error handling subscription cancellation:', error);
+    }
   },
 
-  onSubscriptionFailed: async (payload) => {
+  onSubscriptionFailed: async (payload: any) => {
     console.log('Subscription Failed:', payload);
-    // Handle failed subscription payment
-    // Notify user, update status, etc.
+    try {
+      const customerId = payload.customer_id || payload.customer?.id;
+      const user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      if (user) {
+        // Keep subscription active but you might want to notify the user
+        // The subscription will be marked as expired if payment continues to fail
+        console.log(`Subscription payment failed for user ${user.email}`);
+      }
+    } catch (error) {
+      console.error('Error handling subscription failure:', error);
+    }
   },
 
-  onSubscriptionExpired: async (payload) => {
+  onSubscriptionExpired: async (payload: any) => {
     console.log('Subscription Expired:', payload);
-    // Handle expired subscription
-    // Revoke premium access
+    try {
+      const customerId = payload.customer_id || payload.customer?.id;
+      const user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      if (user) {
+        await UserController.updateSubscription(user.clerkId, {
+          subscriptionStatus: 'expired',
+          subscriptionPlan: 'free', // Downgrade to free
+        });
+        console.log(`Expired subscription for user ${user.email}, downgraded to free`);
+      }
+    } catch (error) {
+      console.error('Error handling subscription expiration:', error);
+    }
   },
 
-  onSubscriptionOnHold: async (payload) => {
+  onSubscriptionOnHold: async (payload: any) => {
     console.log('Subscription On Hold:', payload);
-    // Handle subscription on hold
+    try {
+      const customerId = payload.customer_id || payload.customer?.id;
+      const user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      if (user) {
+        await UserController.updateSubscription(user.clerkId, {
+          subscriptionStatus: 'on_hold',
+        });
+        console.log(`Subscription on hold for user ${user.email}`);
+      }
+    } catch (error) {
+      console.error('Error handling subscription on hold:', error);
+    }
   },
 
-  onSubscriptionPlanChanged: async (payload) => {
+  onSubscriptionPlanChanged: async (payload: any) => {
     console.log('Subscription Plan Changed:', payload);
-    // Handle plan upgrade/downgrade
-    // Update user's plan in database (AI Basic <-> AI Pro)
+    try {
+      const customerId = payload.customer_id || payload.customer?.id;
+      const planName = payload.plan?.name || payload.product?.name || payload.metadata?.plan || 'AI Basic';
+      const user = customerId
+        ? await UserController.getUserByDodoCustomerId(customerId)
+        : null;
+
+      if (user) {
+        const plan = mapDodoPlanToSubscriptionPlan(planName);
+        await UserController.updateSubscription(user.clerkId, {
+          subscriptionPlan: plan,
+          subscriptionStatus: 'active',
+        });
+        console.log(`Changed subscription plan for user ${user.email} to ${plan}`);
+      }
+    } catch (error) {
+      console.error('Error handling subscription plan change:', error);
+    }
   },
 
   // Dispute handlers (optional but recommended)

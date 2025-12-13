@@ -9,12 +9,15 @@ import { useToast } from "@/hooks/use-toast";
 import EncryptNoteDialog from "./EncryptNoteDialog";
 import DecryptNoteDialog from "./DecryptNoteDialog";
 import { backendApi } from "@/lib/api";
+import { useSubscription } from "@/hooks/useSubscription";
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "./ui/dialog";
 
 let titleUpdateTimeout: NodeJS.Timeout;
@@ -25,15 +28,34 @@ function NoteTextInput() {
   const titleRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const [showEncryptDialog, setShowEncryptDialog] = useState(false);
   const [showDecryptDialog, setShowDecryptDialog] = useState(false);
   const [activeFormats, setActiveFormats] = useState<ActiveFormats>({});
   const [isAILoading, setIsAILoading] = useState(false);
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const [aiResultDialog, setAiResultDialog] = useState<{
     open: boolean;
     title: string;
     content: React.ReactNode;
   }>({ open: false, title: "", content: null });
+
+  const checkAIAccess = (): boolean => {
+    if (subscriptionLoading) {
+      toast({
+        title: "Loading...",
+        description: "Please wait while we check your subscription.",
+      });
+      return false;
+    }
+
+    if (!subscription.hasAIAccess) {
+      setUpgradeDialogOpen(true);
+      return false;
+    }
+
+    return true;
+  };
 
 
   useEffect(() => {
@@ -146,6 +168,7 @@ function NoteTextInput() {
 
   // AI Feature Handlers
   const handleSummary = async () => {
+    if (!checkAIAccess()) return;
     const content = editorRef.current?.innerHTML;
     if (!content) return;
     setIsAILoading(true);
@@ -164,6 +187,7 @@ function NoteTextInput() {
   };
 
   const handleGlossary = async () => {
+    if (!checkAIAccess()) return;
     const content = editorRef.current?.innerHTML;
     if (!content) {
       toast({ title: "Note is empty." });
@@ -214,6 +238,7 @@ function NoteTextInput() {
   };
 
   const handleTags = async () => {
+    if (!checkAIAccess()) return;
     const content = editorRef.current?.innerHTML;
     if (!content) return;
     setIsAILoading(true);
@@ -239,6 +264,7 @@ function NoteTextInput() {
   };
 
   const handleGrammar = async () => {
+    if (!checkAIAccess()) return;
     const content = editorRef.current?.innerHTML;
     if (!content) return;
     setIsAILoading(true);
@@ -258,6 +284,7 @@ function NoteTextInput() {
   };
 
   const handleTranslate = async () => {
+    if (!checkAIAccess()) return;
     const language = prompt("Enter target language (e.g., Spanish, French):");
     if (!language) return;
     const content = editorRef.current?.innerHTML;
@@ -303,17 +330,54 @@ function NoteTextInput() {
           Enter the password to decrypt and view this note.
         </p>
         <Button onClick={() => setShowDecryptDialog(true)}>Unlock Note</Button>
-        <EncryptNoteDialog
-          isOpen={showEncryptDialog}
-          onClose={() => setShowEncryptDialog(false)}
-        />
-        <DecryptNoteDialog
-          isOpen={showDecryptDialog}
-          onClose={() => setShowDecryptDialog(false)}
-        />
-      </div>
-    );
-  }
+      <EncryptNoteDialog
+        isOpen={showEncryptDialog}
+        onClose={() => setShowEncryptDialog(false)}
+      />
+      <DecryptNoteDialog
+        isOpen={showDecryptDialog}
+        onClose={() => setShowDecryptDialog(false)}
+      />
+      
+      {/* Upgrade Dialog */}
+      <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5" />
+              Premium Feature
+            </DialogTitle>
+            <DialogDescription>
+              AI features are available with AI Basic or AI Pro subscription plans.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              Upgrade to unlock powerful AI features:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-sm">
+              <li>AI Analysis & Summary</li>
+              <li>Grammar Check</li>
+              <li>Suggested Tags</li>
+              <li>Translation</li>
+              <li>Glossary Extraction</li>
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setUpgradeDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Link href="/pricing">
+              <Button onClick={() => setUpgradeDialogOpen(false)}>
+                View Plans
+              </Button>
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
 
   return (
     <div className="flex h-full w-full flex-col p-2">
@@ -336,6 +400,7 @@ function NoteTextInput() {
           onTranslate={handleTranslate}
           onEncrypt={handleEncryptNote}
           isAILoading={isAILoading}
+          hasAIAccess={subscription.hasAIAccess}
         />
       </div>
 

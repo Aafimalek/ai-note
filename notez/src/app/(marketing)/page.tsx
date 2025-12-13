@@ -15,11 +15,11 @@ export default function LandingPage() {
     const { isSignedIn, isLoaded } = useAuth();
     const router = useRouter();
 
-    // useEffect(() => {
-    //     if (isLoaded && isSignedIn) {
-    //         router.push("/notes");
-    //     }
-    // }, [isLoaded, isSignedIn, router]);
+    useEffect(() => {
+        if (isLoaded && isSignedIn) {
+            router.push("/notes");
+        }
+    }, [isLoaded, isSignedIn, router]);
 
     // Show loading state while checking auth
     if (!isLoaded) {
