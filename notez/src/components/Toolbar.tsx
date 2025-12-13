@@ -16,6 +16,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export type ActiveFormats = {
   bold?: boolean;
@@ -41,6 +42,7 @@ type ToolbarProps = {
   onTranslate?: () => void;
   onEncrypt?: () => void;
   isAILoading?: boolean;
+  hasAIAccess?: boolean;
 };
 
 function Toolbar({
@@ -57,6 +59,7 @@ function Toolbar({
   onTranslate,
   onEncrypt,
   isAILoading,
+  hasAIAccess = false,
 }: ToolbarProps) {
   return (
     <div className="flex items-center w-full">
@@ -144,6 +147,7 @@ function Toolbar({
             onClick={onSummary}
             disabled={isAILoading}
             title="AI Summary"
+            className={cn(!hasAIAccess && "opacity-50 cursor-not-allowed")}
           >
             {isAILoading ? <Loader2 className="animate-spin" /> : <FileText />}
           </Button>
@@ -155,6 +159,7 @@ function Toolbar({
             onClick={onGlossary}
             disabled={isAILoading}
             title="Extract Glossary"
+            className={cn(!hasAIAccess && "opacity-50 cursor-not-allowed")}
           >
             <BookOpen />
           </Button>
@@ -166,6 +171,7 @@ function Toolbar({
             onClick={onTags}
             disabled={isAILoading}
             title="Suggest Tags"
+            className={cn(!hasAIAccess && "opacity-50 cursor-not-allowed")}
           >
             <Tags />
           </Button>
@@ -177,6 +183,7 @@ function Toolbar({
             onClick={onGrammar}
             disabled={isAILoading}
             title="Check Grammar"
+            className={cn(!hasAIAccess && "opacity-50 cursor-not-allowed")}
           >
             <SpellCheck />
           </Button>
@@ -188,6 +195,7 @@ function Toolbar({
             onClick={onTranslate}
             disabled={isAILoading}
             title="Translate"
+            className={cn(!hasAIAccess && "opacity-50 cursor-not-allowed")}
           >
             <Languages />
           </Button>

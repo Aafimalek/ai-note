@@ -4,7 +4,8 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, RefreshCw, Loader2 } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 
 // Force dynamic rendering to prevent build-time prerendering errors
 export const dynamic = 'force-dynamic';
@@ -15,15 +16,30 @@ function PaymentSuccessContent() {
 
     useEffect(() => {
         // Check if payment was successful based on query parameters
-        const paymentId = searchParams.get("payment_id");
-        const status = searchParams.get("status");
+        // Dodo Payments may send different parameter names
+        const paymentId = searchParams.get("payment_id") || searchParams.get("paymentId") || searchParams.get("id");
+        const status = searchParams.get("status") || searchParams.get("payment_status");
+        const sessionId = searchParams.get("session_id") || searchParams.get("sessionId");
 
-        if (paymentId && status === "success") {
-            setStatus("success");
-        } else if (status === "failed" || status === "cancelled") {
+        console.log('Payment success page - Query params:', {
+            paymentId,
+            status,
+            sessionId,
+            allParams: Object.fromEntries(searchParams.entries()),
+        });
+
+        // If we have a payment ID or session ID, payment was likely successful
+        if (paymentId || sessionId) {
+            if (status === "failed" || status === "cancelled" || status === "error") {
+                setStatus("error");
+            } else {
+                setStatus("success");
+            }
+        } else if (status === "failed" || status === "cancelled" || status === "error") {
             setStatus("error");
         } else {
-            // If no clear status, assume success (user was redirected here)
+            // If no clear status but user was redirected here, assume success
+            // The webhook will handle the actual subscription activation
             setStatus("success");
         }
     }, [searchParams]);
@@ -71,7 +87,10 @@ function PaymentSuccessContent() {
                     Payment Successful!
                 </h1>
                 <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-                    Thank you for your subscription. Your account has been upgraded and you now have access to all premium features.
+                    Thank you for your subscription! Your payment was successful. Your account will be upgraded shortly and you'll have access to all premium features.
+                </p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-500 mb-6">
+                    Note: It may take a few moments for your subscription to activate. If you don't see your premium features, please refresh the page.
                 </p>
                 <div className="flex gap-4 justify-center">
                     <Link href="/notes">

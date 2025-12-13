@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Lock } from "lucide-react";
 import { Button } from "./ui/button";
 import {
     DropdownMenu,
@@ -19,6 +19,8 @@ import {
 } from "./ui/dialog";
 import { backendApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
+import Link from "next/link";
 
 type AIFeaturesMenuProps = {
     getNoteContent: () => string;
@@ -32,8 +34,10 @@ export default function AIFeaturesMenu({
     onAddTags,
 }: AIFeaturesMenuProps) {
     const { toast } = useToast();
+    const { subscription, loading: subscriptionLoading } = useSubscription();
     const [isLoading, setIsLoading] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
     const [dialogContent, setDialogContent] = useState<{
         title: string;
         description?: string;
@@ -41,6 +45,33 @@ export default function AIFeaturesMenu({
         action?: () => void;
         actionLabel?: string;
     } | null>(null);
+
+    const checkAIAccess = (): boolean => {
+        // Always block if still loading
+        if (subscriptionLoading) {
+            toast({
+                title: "Loading...",
+                description: "Please wait while we check your subscription.",
+            });
+            return false;
+        }
+
+        // Debug logging
+        console.log('AI Access Check:', {
+            plan: subscription.plan,
+            status: subscription.status,
+            hasAIAccess: subscription.hasAIAccess,
+            loading: subscriptionLoading,
+        });
+
+        // Block if no AI access
+        if (!subscription.hasAIAccess) {
+            setUpgradeDialogOpen(true);
+            return false;
+        }
+
+        return true;
+    };
 
     const handleAction = async (
         actionName: string,
@@ -61,6 +92,7 @@ export default function AIFeaturesMenu({
     };
 
     const handleSummary = () => {
+        if (!checkAIAccess()) return;
         handleAction("Summary", async () => {
             const content = getNoteContent();
             if (!content) return;
@@ -74,6 +106,7 @@ export default function AIFeaturesMenu({
     };
 
     const handleGlossary = () => {
+        if (!checkAIAccess()) return;
         handleAction("Glossary", async () => {
             const content = getNoteContent();
             if (!content) {
@@ -182,6 +215,7 @@ export default function AIFeaturesMenu({
     };
 
     const handleTags = () => {
+        if (!checkAIAccess()) return;
         handleAction("Tags", async () => {
             const content = getNoteContent();
             if (!content) return;
@@ -195,6 +229,7 @@ export default function AIFeaturesMenu({
     };
 
     const handleGrammar = () => {
+        if (!checkAIAccess()) return;
         handleAction("Grammar", async () => {
             const content = getNoteContent();
             if (!content) return;
@@ -230,6 +265,7 @@ export default function AIFeaturesMenu({
     };
 
     const handleTranslate = () => {
+        if (!checkAIAccess()) return;
         // Simple prompt for language for now
         const language = prompt("Enter target language (e.g., Spanish, French):");
         if (!language) return;
@@ -257,24 +293,51 @@ export default function AIFeaturesMenu({
         <>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" disabled={isLoading}>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        disabled={isLoading || subscriptionLoading}
+                        title="AI Features"
+                        className={!subscription.hasAIAccess ? "opacity-50" : ""}
+                    >
                         {isLoading ? (
                             <Loader2 className="animate-spin" />
                         ) : (
-                            <Sparkles className="text-yellow-500" />
+                            <Sparkles className={subscription.hasAIAccess ? "text-yellow-500" : "text-muted-foreground"} />
                         )}
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleSummary}>AI Summary</DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleGlossary}>
+                    <DropdownMenuItem 
+                        onClick={handleSummary}
+                        className={!subscription.hasAIAccess ? "opacity-50 cursor-not-allowed" : ""}
+                    >
+                        AI Summary
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                        onClick={handleGlossary}
+                        className={!subscription.hasAIAccess ? "opacity-50 cursor-not-allowed" : ""}
+                    >
                         Extract Glossary
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleTags}>Suggest Tags</DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleGrammar}>
+                    <DropdownMenuItem 
+                        onClick={handleTags}
+                        className={!subscription.hasAIAccess ? "opacity-50 cursor-not-allowed" : ""}
+                    >
+                        Suggest Tags
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                        onClick={handleGrammar}
+                        className={!subscription.hasAIAccess ? "opacity-50 cursor-not-allowed" : ""}
+                    >
                         Check Grammar
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleTranslate}>Translate</DropdownMenuItem>
+                    <DropdownMenuItem 
+                        onClick={handleTranslate}
+                        className={!subscription.hasAIAccess ? "opacity-50 cursor-not-allowed" : ""}
+                    >
+                        Translate
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
@@ -293,6 +356,43 @@ export default function AIFeaturesMenu({
                                 {dialogContent.actionLabel}
                             </Button>
                         )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Upgrade Dialog */}
+            <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Lock className="h-5 w-5" />
+                            Premium Feature
+                        </DialogTitle>
+                        <DialogDescription>
+                            AI features are available with AI Basic or AI Pro subscription plans.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Upgrade to unlock powerful AI features:
+                        </p>
+                        <ul className="list-disc list-inside space-y-2 text-sm">
+                            <li>AI Analysis & Summary</li>
+                            <li>Grammar Check</li>
+                            <li>Suggested Tags</li>
+                            <li>Translation</li>
+                            <li>Glossary Extraction</li>
+                        </ul>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setUpgradeDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Link href="/pricing">
+                            <Button onClick={() => setUpgradeDialogOpen(false)}>
+                                View Plans
+                            </Button>
+                        </Link>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

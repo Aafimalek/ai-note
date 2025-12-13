@@ -44,7 +44,16 @@ function Header() {
         </Link>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <Link href="/pricing">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs sm:text-sm font-medium"
+          >
+            Upgrade
+          </Button>
+        </Link>
         <DarkModeToggle />
         <UserButton
           afterSignOutUrl="/"

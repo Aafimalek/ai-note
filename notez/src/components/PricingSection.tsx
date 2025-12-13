@@ -41,6 +41,8 @@ export default function PricingSection() {
                         email: user?.emailAddresses[0]?.emailAddress,
                         full_name: user?.fullName || `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
                     },
+                    // Return URL to redirect after payment
+                    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success` || 'https://www.ai-notez.fun/payment/success',
                     // Add metadata to track which plan was selected
                     metadata: {
                         plan: planName,
