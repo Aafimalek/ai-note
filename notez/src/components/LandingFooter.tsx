@@ -15,15 +15,15 @@ export default function LandingFooter() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <h3 className="text-sm font-semibold tracking-wider uppercase text-muted-foreground mb-1">Product</h3>
-                        <Link href="#features" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
+                        <Link href="/#features" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
                             Features
                             <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                         </Link>
-                        <Link href="#pricing" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
+                        <Link href="/#pricing" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
                             Pricing
                             <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                         </Link>
-                        <Link href="#about" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
+                        <Link href="/about" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
                             About
                             <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                         </Link>
@@ -45,12 +45,12 @@ export default function LandingFooter() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <h3 className="text-sm font-semibold tracking-wider uppercase text-muted-foreground mb-1">Legal</h3>
-                        <Link href="#" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
-                            Privacy Policy
+                        <Link href="/terms" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
+                            Terms of Service
                             <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                         </Link>
-                        <Link href="#" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
-                            Terms of Service
+                        <Link href="/contact" className="text-sm hover:text-primary transition-colors duration-300 relative group w-fit">
+                            Contact Us
                             <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                         </Link>
                     </div>
