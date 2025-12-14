@@ -22,13 +22,13 @@ export default function LandingPage() {
     }, [isLoaded, isSignedIn, router]);
 
     // Show loading state while checking auth
-    if (!isLoaded) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-neutral-600 dark:text-neutral-400">Loading...</div>
-            </div>
-        );
-    }
+    // if (!isLoaded) {
+    //     return (
+    //         <div className="flex items-center justify-center min-h-screen">
+    //             <div className="text-neutral-600 dark:text-neutral-400">Loading...</div>
+    //         </div>
+    //     );
+    // }
 
     // // If signed in, don't render the landing page (redirect will happen)
     // if (isSignedIn) {
