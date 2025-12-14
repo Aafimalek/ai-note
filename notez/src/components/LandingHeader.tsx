@@ -22,16 +22,20 @@ export default function LandingHeader() {
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-6">
-                    <Link href="#features" className="text-sm font-medium hover:text-primary transition-colors relative group">
+                    <Link href="/#features" className="text-sm font-medium hover:text-primary transition-colors relative group">
                         Features
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                     </Link>
-                    <Link href="#pricing" className="text-sm font-medium hover:text-primary transition-colors relative group">
+                    <Link href="/#pricing" className="text-sm font-medium hover:text-primary transition-colors relative group">
                         Pricing
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                     </Link>
-                    <Link href="#about" className="text-sm font-medium hover:text-primary transition-colors relative group">
+                    <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors relative group">
                         About
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                    </Link>
+                    <Link href="/contact" className="text-sm font-medium hover:text-primary transition-colors relative group">
+                        Contact
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                     </Link>
                 </nav>
