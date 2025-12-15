@@ -15,9 +15,33 @@ import Script from "next/script";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
-// Trigger rebuild
+// OG Image metadata for social sharing
 export const metadata: Metadata = {
   title: "AI Notes",
+  description: "Capture Your Thoughts with AI-Powered Precision. AI is revolutionizing the way we take notes by automatically summarizing content, identifying key concepts, and organizing information.",
+  metadataBase: new URL("https://ai-notez.fun"),
+  openGraph: {
+    title: "AI Notes",
+    description: "Capture Your Thoughts with AI-Powered Precision. AI is revolutionizing the way we take notes by automatically summarizing content, identifying key concepts, and organizing information.",
+    url: "https://ai-notez.fun/",
+    siteName: "AI Notes",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "AI Notes - Capture Your Thoughts with AI-Powered Precision",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Notes",
+    description: "Capture Your Thoughts with AI-Powered Precision. AI is revolutionizing the way we take notes by automatically summarizing content, identifying key concepts, and organizing information.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
