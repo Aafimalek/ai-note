@@ -7,11 +7,23 @@ import DarkModeToggle from "./DarkModeToggle";
 import { useSidebar } from "./ui/sidebar";
 import { UserButton } from "@clerk/nextjs";
 import { PanelLeft } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 
 import logo from "@/assets/logo.png";
 
 function Header() {
   const { state, toggleSidebar } = useSidebar();
+  const { subscription, loading } = useSubscription();
+
+  // Determine button text based on subscription
+  const getButtonText = () => {
+    if (loading) return "Upgrade";
+    if (subscription.status === 'active') {
+      if (subscription.plan === 'ai_basic') return "Basic";
+      if (subscription.plan === 'ai_pro') return "Pro";
+    }
+    return "Upgrade";
+  };
 
   return (
     <header
@@ -51,7 +63,7 @@ function Header() {
             size="sm"
             className="text-xs sm:text-sm font-medium"
           >
-            Upgrade
+            {getButtonText()}
           </Button>
         </Link>
         <DarkModeToggle />

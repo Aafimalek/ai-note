@@ -20,13 +20,12 @@ import {
   DialogFooter,
 } from "./ui/dialog";
 
-let titleUpdateTimeout: NodeJS.Timeout;
-let contentUpdateTimeout: NodeJS.Timeout;
-
 function NoteTextInput() {
   const { selectedNote, updateNote } = useNote();
   const titleRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
+  const titleUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const contentUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const { subscription, loading: subscriptionLoading } = useSubscription();
   const [showEncryptDialog, setShowEncryptDialog] = useState(false);
@@ -75,6 +74,18 @@ function NoteTextInput() {
     }
   }, [selectedNote]);
 
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (titleUpdateTimeoutRef.current) {
+        clearTimeout(titleUpdateTimeoutRef.current);
+      }
+      if (contentUpdateTimeoutRef.current) {
+        clearTimeout(contentUpdateTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const updateActiveFormats = useCallback(() => {
     const newFormats: ActiveFormats = {};
     const commands: (keyof ActiveFormats)[] = [
@@ -115,9 +126,14 @@ function NoteTextInput() {
   const handleTitleInput = (e: FormEvent<HTMLInputElement>) => {
     const newTitle = e.currentTarget.value;
     if (selectedNote) {
-      clearTimeout(titleUpdateTimeout);
-      titleUpdateTimeout = setTimeout(() => {
+      // Clear previous timeout
+      if (titleUpdateTimeoutRef.current) {
+        clearTimeout(titleUpdateTimeoutRef.current);
+      }
+      // Set new timeout
+      titleUpdateTimeoutRef.current = setTimeout(() => {
         updateNote(selectedNote.id, { title: newTitle });
+        titleUpdateTimeoutRef.current = null;
       }, 500);
     }
   };
@@ -126,9 +142,14 @@ function NoteTextInput() {
     const newContent = e.currentTarget.innerHTML;
 
     if (selectedNote) {
-      clearTimeout(contentUpdateTimeout);
-      contentUpdateTimeout = setTimeout(() => {
+      // Clear previous timeout
+      if (contentUpdateTimeoutRef.current) {
+        clearTimeout(contentUpdateTimeoutRef.current);
+      }
+      // Set new timeout
+      contentUpdateTimeoutRef.current = setTimeout(() => {
         updateNote(selectedNote.id, { content: newContent });
+        contentUpdateTimeoutRef.current = null;
       }, 500);
     }
   };
@@ -139,9 +160,14 @@ function NoteTextInput() {
       document.execCommand(command, false, value ?? undefined);
       const newContent = editorRef.current.innerHTML;
       if (selectedNote) {
-        clearTimeout(contentUpdateTimeout);
-        contentUpdateTimeout = setTimeout(() => {
+        // Clear previous timeout
+        if (contentUpdateTimeoutRef.current) {
+          clearTimeout(contentUpdateTimeoutRef.current);
+        }
+        // Set new timeout
+        contentUpdateTimeoutRef.current = setTimeout(() => {
           updateNote(selectedNote.id, { content: newContent });
+          contentUpdateTimeoutRef.current = null;
         }, 500);
       }
     }
@@ -330,54 +356,54 @@ function NoteTextInput() {
           Enter the password to decrypt and view this note.
         </p>
         <Button onClick={() => setShowDecryptDialog(true)}>Unlock Note</Button>
-      <EncryptNoteDialog
-        isOpen={showEncryptDialog}
-        onClose={() => setShowEncryptDialog(false)}
-      />
-      <DecryptNoteDialog
-        isOpen={showDecryptDialog}
-        onClose={() => setShowDecryptDialog(false)}
-      />
-      
-      {/* Upgrade Dialog */}
-      <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5" />
-              Premium Feature
-            </DialogTitle>
-            <DialogDescription>
-              AI features are available with AI Basic or AI Pro subscription plans.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Upgrade to unlock powerful AI features:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-sm">
-              <li>AI Analysis & Summary</li>
-              <li>Grammar Check</li>
-              <li>Suggested Tags</li>
-              <li>Translation</li>
-              <li>Glossary Extraction</li>
-            </ul>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setUpgradeDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Link href="/pricing">
-              <Button onClick={() => setUpgradeDialogOpen(false)}>
-                View Plans
+        <EncryptNoteDialog
+          isOpen={showEncryptDialog}
+          onClose={() => setShowEncryptDialog(false)}
+        />
+        <DecryptNoteDialog
+          isOpen={showDecryptDialog}
+          onClose={() => setShowDecryptDialog(false)}
+        />
+
+        {/* Upgrade Dialog */}
+        <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Premium Feature
+              </DialogTitle>
+              <DialogDescription>
+                AI features are available with AI Basic or AI Pro subscription plans.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground mb-4">
+                Upgrade to unlock powerful AI features:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-sm">
+                <li>AI Analysis & Summary</li>
+                <li>Grammar Check</li>
+                <li>Suggested Tags</li>
+                <li>Translation</li>
+                <li>Glossary Extraction</li>
+              </ul>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setUpgradeDialogOpen(false)}>
+                Cancel
               </Button>
-            </Link>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
+              <Link href="/pricing">
+                <Button onClick={() => setUpgradeDialogOpen(false)}>
+                  View Plans
+                </Button>
+              </Link>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full w-full flex-col p-2">
