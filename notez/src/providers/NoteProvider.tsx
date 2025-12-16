@@ -1,7 +1,7 @@
 "use client";
 
 import { Note } from "@/types";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useRef } from "react";
 import { encryptNote, decryptNote } from "@/lib/encryption";
 import { notesApi } from "@/lib/api";
 
@@ -48,6 +48,8 @@ function NoteProvider({ children }: { children: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Track update sequence numbers to prevent race conditions
+  const updateSequences = useRef<Map<string, number>>(new Map());
 
   // Fetch notes from API on mount
   useEffect(() => {
@@ -137,8 +139,20 @@ function NoteProvider({ children }: { children: React.ReactNode }) {
       encryptedContent?: string;
     }
   ) => {
+    // Increment sequence number for this note
+    const currentSequence = (updateSequences.current.get(noteId) || 0) + 1;
+    updateSequences.current.set(noteId, currentSequence);
+
     try {
       const updatedNote = await notesApi.update(noteId, data);
+
+      // Only apply update if this is still the latest sequence
+      const latestSequence = updateSequences.current.get(noteId) || 0;
+      if (currentSequence < latestSequence) {
+        // A newer update has started, ignore this result
+        return;
+      }
+
       setNotes((prevNotes) =>
         prevNotes.map((note) => (note.id === noteId ? updatedNote : note))
       );
@@ -147,6 +161,14 @@ function NoteProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error("Error updating note:", error);
+
+      // Only apply fallback if this is still the latest sequence
+      const latestSequence = updateSequences.current.get(noteId) || 0;
+      if (currentSequence < latestSequence) {
+        // A newer update has started, ignore this result
+        return;
+      }
+
       // Fallback: update local state
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
